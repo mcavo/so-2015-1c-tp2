@@ -176,7 +176,7 @@ enum COLORS
 
 #define NVCONS 9
 
-void mt_cons_init(void);
+driver_t* mt_cons_init(void);
 
 void mt_cons_clear(void);
 void mt_cons_clreol(void);
@@ -249,7 +249,7 @@ typedef struct __attribute__((packed))
 }
 input_event_t;
 
-void mt_input_init(void);
+driver_t* mt_input_init(void);
 
 bool mt_input_put(input_event_t *ev);
 bool mt_input_get(input_event_t *ev);
@@ -267,7 +267,7 @@ void mt_input_setcurrent(unsigned consnum);
 
 /* ps2.c */
 
-void mt_ps2_init(void);
+driver_t* mt_ps2_init(void);
 const char *mt_ps2_getlayout(void);
 bool mt_ps2_setlayout(const char *name);
 const char **mt_ps2_layouts(void);
@@ -299,7 +299,6 @@ typedef struct
 	int (*write_driver)(char *buf, int size);
 	int (*close_driver)(void);
 	int (*ioctl_driver)(void);
-	int bock;
 	int (*read_block_driver)(char *buf, int size);
 	int (*write_block_driver)(char *buf, int size);
 }
