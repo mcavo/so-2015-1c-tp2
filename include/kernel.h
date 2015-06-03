@@ -284,10 +284,27 @@ enum ide_minors				// Números de los discos
 	IDE_SEC_SLAVE
 };
 
-void mt_ide_init(void);
+driver_t* mt_ide_init(void);
 unsigned mt_ide_read(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 unsigned mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 char *mt_ide_model(unsigned minor);
 unsigned mt_ide_capacity(unsigned minor);
 
+/* drives's struct */
+typedef struct 
+{
+	char* name;
+	int (*open_driver)(void);
+	int (*read_driver)(char *buf, int size);
+	int (*write_driver)(char *buf, int size);
+	int (*close_driver)(void);
+	int (*ioctl_driver)(void);
+	int bock;
+	int (*read_block_driver)(char *buf, int size);
+	int (*write_block_driver)(char *buf, int size);
+}
+driver_t;
+
 #endif
+
+
