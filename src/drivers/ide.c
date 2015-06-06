@@ -9,7 +9,7 @@
 
 #include <kernel.h>
 
-#define NAME "Ide"
+#define NAME_IDE "Ide"
 // Dimensionamiento
 #define NR_CONTROLLERS 					2
 #define DEVS_PER_CONTROLLER				2
@@ -145,6 +145,8 @@ fix(char *s, int len)
 		*p = 0;
 	}
 }
+
+static driver_t *generateDriver_ide();
 
 // Esperar BSY==0, leyendo el status alternativo.
 // Después de un breve período inicial empieza a soltar la CPU entre encuestas sucesivas.
@@ -421,7 +423,7 @@ ide_interrupt(unsigned irq)
 // Interfaz pública
 
 // Inicialización
-void
+driver_t *
 mt_ide_init(void)
 {
 	int i, j;
@@ -457,7 +459,7 @@ mt_ide_init(void)
 		mt_set_int_handler(controller->irq, ide_interrupt);
 		mt_enable_irq(controller->irq);
 	}
-	driver_t* driver = generateDriver();
+	driver_t* driver = generateDriver_ide();
 	return driver;
 }
 
@@ -496,46 +498,46 @@ mt_ide_capacity(unsigned minor)
 
 /* driver interface */
 
-int open_driver(void){
+int open_driver_ide(void){
 	//TODO: ver si vamos hacer algo
 	return 0;
 }
 
-int read_driver(char *buf, int size){
+int read_driver_ide(char *buf, int size){
 	//TODO: implementar si llegamos
 	return NO_METHOD_EXIST;
 }
 
-int write_driver(char *buf, int size){
+int write_driver_ide(char *buf, int size){
 	//TODO: implementar si llegamos
 	return NO_METHOD_EXIST;
 }
 
-int close_driver(void) {
+int close_driver_ide(void) {
 	//TODO: ver si vamos a hacer algo
 	return 0;
 }
 
-int ioctl_driver(void) {
+int ioctl_driver_ide(void) {
 	//TODO: copiar prototipo y funcionamiento de printf
 	return 0;
 }
 
-int read_block_driver(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 
-	return mt_ide_read(miinor, block, nblocks, buffer);
+int read_block_driver_ide(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 
+	return mt_ide_read(minor, block, nblocks, buffer);
 }
 	
-int write_block_driver(unsigned minor, unsigned block, unsigned nblocks, void *buffer) {
+int write_block_driver_ide(unsigned minor, unsigned block, unsigned nblocks, void *buffer) {
 	return mt_ide_write(minor, block, nblocks, buffer);
 }
 
-driver_t *generateDriver() {
-	driver_t *driver = malloc(sizeOf(driver_t));
-	driver.name = NAME;
-	driver.read_driver = *read_driver;
-	driver.write_driver = *write_driver;
-	driver.ioctl_driver = *ioctl_driver;
-	driver.read_block_driver = *read_block_driver;
-	driver.write_block_driver = *write_block_driver;
+driver_t *generateDriver_ide() {
+	driver_t *driver = malloc(sizeof(driver_t));
+	driver->name = NAME_IDE;
+	driver->read_driver = *read_driver_ide;
+	driver->write_driver = *write_driver_ide;
+	driver->ioctl_driver = *ioctl_driver_ide;
+	driver->read_block_driver = *read_block_driver_ide;
+	driver->write_block_driver = *write_block_driver_ide;
 	return driver;
 }
