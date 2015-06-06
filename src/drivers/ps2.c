@@ -206,6 +206,8 @@ static unsigned locks;			/* per console lock keys state */
 
 static bool intelli;			/* Intellimouse */
 
+static driver_t *generateDriver_ps2();
+
 /* Lock key active bits.  Chosen to be equal to the keyboard LED bits. */
 #define SCROLL_LOCK     0x01
 #define NUM_LOCK        0x02
@@ -563,7 +565,7 @@ mouse_task(void *arg)
 
 // Interfaz
 
-void
+drive_t*
 mt_ps2_init(void)
 {
 	// Establecer la distribución de teclado inicial.
@@ -623,3 +625,50 @@ mt_ps2_layouts(void)
 	return names;
 }
 
+/* driver interface */
+
+int open_driver_ps2(void){
+	//TODO: ver si vamos hacer algo
+	return 0;
+}
+
+int read_driver_cons_ps2(char *buf, int size){
+	//TODO: como lo implementamos??
+	return NO_METHOD_EXIST;
+}
+
+int write_driver_ps2(char *buf, int size){
+	char *data = malloc(sizeof(char) * size);
+	memcpy(data, buf, size);
+	mt_cons_puts(data);
+	return size;
+}
+
+int close_driver_ps2(void) {
+	//TODO: ver si vamos a hacer algo
+	return 0;
+}
+
+int ioctl_driver_ps2(void) {
+	//TODO: copiar prototipo y funcionamiento de printf
+	return 0;
+}
+
+int read_block_driver_ps2(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 
+	return NO_METHOD_EXIST;
+}
+	
+int write_block_driver_ps2(unsigned minor, unsigned block, unsigned nblocks, void *buffer) {
+	return NO_METHOD_EXIST;
+}
+
+driver_t *generateDriver_ps2() {
+	driver_t *driver = malloc(sizeof(driver_t));
+	driver->name = NAME_PS2;
+	driver->read_driver = *read_driver_ps2;
+	driver->write_driver = *write_driver_cons_ps2;
+	driver->ioctl_driver = *ioctl_driver_cons_ps2;
+	driver->read_block_driver = *read_block_driver_cons_ps2;
+	driver->write_block_driver = *write_block_driver_cons_ps2;
+	return driver;
+}
