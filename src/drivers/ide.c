@@ -8,7 +8,6 @@
 // más ineficiente de transferir un solo sector por interrupción).
 
 #include <kernel.h>
-#include <drivers.h>
 
 #define NAME "Ide"
 // Dimensionamiento
