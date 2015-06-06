@@ -6,7 +6,7 @@
 #define MAX_DRIVERS_COUNT 6
 #define CONS_DRIVER 0
 #define INPUT_DRIVER 1
-#define PS_DRIVER 2
+#define PS2_DRIVER 2
 #define IDE_DRIVER 3
 
 /* códigos de error */
@@ -26,7 +26,5 @@ typedef struct
 	int (*write_block_driver)(char *buf, int size);
 }
 driver_t;
-
-static driver_t driverTable[MAX_DRIVERS_COUNT];
 
 #endif
