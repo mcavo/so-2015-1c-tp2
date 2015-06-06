@@ -16,6 +16,7 @@
 #define DEFATTR ((BLACK << 12) | (LIGHTGRAY << 8))
 
 #define BS 0x08
+#define NAME "Cons"
 
 typedef unsigned short row[NUMCOLS];
 
@@ -49,6 +50,7 @@ static console vcons[NVCONS];
 static unsigned focus;
 static unsigned current;
 static console *cons = &real_console;
+static driver_t *generateDriver_cons();
 
 static void 
 init_vcons(unsigned n)
@@ -150,7 +152,7 @@ put(unsigned char ch)
 
 /* Interfaz pública */
 
-void
+driver_t *
 mt_cons_init(void)
 {
 	unsigned i;
@@ -165,6 +167,8 @@ mt_cons_init(void)
 	// Inicializar las consolas virtuales
 	for (i = 0; i < NVCONS; i++)
 		init_vcons(i);
+
+	return generateDriver_cons();
 }
 
 void
@@ -394,4 +398,52 @@ mt_cons_set0(void)
 	current = 0;
 	set_cons();
 	return prev;
+}
+
+/* driver interface */
+
+int open_driver(void){
+	//TODO: ver si vamos hacer algo
+	return 0;
+}
+
+int read_driver(char *buf, int size){
+	//TODO: como lo implementamos??
+	return NO_METHOD_EXIST;
+}
+
+int write_driver(char *buf, int size){
+	char *data = malloc(sizeof(char) * size);
+	memcpy(data, buf, size);
+	mt_cons_puts(data);
+	return size;
+}
+
+int close_driver(void) {
+	//TODO: ver si vamos a hacer algo
+	return 0;
+}
+
+int ioctl_driver(void) {
+	//TODO: copiar prototipo y funcionamiento de printf
+	return 0;
+}
+
+int read_block_driver(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 
+	return NO_METHOD_EXIST;
+}
+	
+int write_block_driver(unsigned minor, unsigned block, unsigned nblocks, void *buffer) {
+	return NO_METHOD_EXIST;
+}
+
+driver_t *generateDriver_cons() {
+	driver_t *driver = malloc(sizeof(driver_t));
+	driver->name = NAME;
+	driver->read_driver = *read_driver;
+	driver->write_driver = *write_driver;
+	driver->ioctl_driver = *ioctl_driver;
+	driver->read_block_driver = *read_block_driver;
+	driver->write_block_driver = *write_block_driver;
+	return driver;
 }

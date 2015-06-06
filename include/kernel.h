@@ -4,6 +4,7 @@
 #include <mtask.h>
 #include <segments.h>
 #include <const.h>
+#include "drivers.h"
 
 #define MTASK_VERSION	"20.03"		// Nro. de versión de MTask
 
@@ -176,7 +177,7 @@ enum COLORS
 
 #define NVCONS 9
 
-void mt_cons_init(void);
+driver_t* mt_cons_init(void);
 
 void mt_cons_clear(void);
 void mt_cons_clreol(void);
@@ -249,7 +250,7 @@ typedef struct __attribute__((packed))
 }
 input_event_t;
 
-void mt_input_init(void);
+driver_t* mt_input_init(void);
 
 bool mt_input_put(input_event_t *ev);
 bool mt_input_get(input_event_t *ev);
@@ -267,7 +268,7 @@ void mt_input_setcurrent(unsigned consnum);
 
 /* ps2.c */
 
-void mt_ps2_init(void);
+driver_t* mt_ps2_init(void);
 const char *mt_ps2_getlayout(void);
 bool mt_ps2_setlayout(const char *name);
 const char **mt_ps2_layouts(void);
@@ -284,10 +285,12 @@ enum ide_minors				// Números de los discos
 	IDE_SEC_SLAVE
 };
 
-void mt_ide_init(void);
+driver_t* mt_ide_init(void);
 unsigned mt_ide_read(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 unsigned mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 char *mt_ide_model(unsigned minor);
 unsigned mt_ide_capacity(unsigned minor);
 
 #endif
+
+
