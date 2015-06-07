@@ -18,8 +18,8 @@ typedef struct
 {
 	char* name;
 	int (*open_driver)(void);
-	int (*read_driver)(unsigned char *buf, unsigned size);
-	int (*write_driver)(unsigned char *buf, unsigned size);
+	int (*read_driver)(char *buf, unsigned size);
+	int (*write_driver)(char *buf, unsigned size);
 	int (*close_driver)(void);
 	int (*ioctl_driver)(void);
 	int (*read_block_driver)(unsigned minor, unsigned block, unsigned nblocks, void *buffer);

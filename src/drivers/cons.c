@@ -407,14 +407,19 @@ int open_driver_cons(void){
 	return 0;
 }
 
-int read_driver_cons(unsigned char *buf, unsigned size){
+int read_driver_cons(char *buf, unsigned size){
 	//TODO: como lo implementamos??
 	return NO_METHOD_EXIST;
 }
 
-int write_driver_cons(unsigned char *buf, unsigned size){
-	//TODO: ver si hay forma de usar el size o implementar eso.
-	mt_cons_puts(buf);
+/* size only must be 0 if you want to put all the string. If size = 1 putc is used */
+int write_driver_cons(char *buf, unsigned size){
+	if (size == 0)
+		mt_cons_puts(buf);
+	else {
+		char c = *buf;
+		mt_cons_putc(c);
+	}
 	return 0;
 }
 

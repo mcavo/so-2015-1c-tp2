@@ -14,11 +14,9 @@ vprintk(const char *fmt, va_list args)
 		{
 			if ( (c = buf[i]) == '\n' )
 				mt_cons_putc('\r');
-				//(cons->write_driver)((unsigned char *)"\r", 0);
+				// (cons->write_driver)("\r", 1);
 			mt_cons_putc(c);
-			/*char *str;
-			sprintf(str, "%c", c);
-			(cons->write_driver)((unsigned char *)str, 0);*/
+			// (cons->write_driver)((char*)&c, 1);
 		}
 
 	return n;

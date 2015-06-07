@@ -52,13 +52,13 @@ mt_input_get_timed(input_event_t *ev, unsigned timeout)
 }
 
 bool
-mt_kbd_putch(unsigned char c)
+mt_kbd_putch(char c)
 {
 	return PutMsgQueueCond(key_focus, &c);
 }
 
 bool
-mt_kbd_puts(unsigned char *s, unsigned len)	
+mt_kbd_puts(char *s, unsigned len)	
 {
 	Atomic();
 	if ( INPUTSIZE - AvailMsgQueue(key_focus) < len )
@@ -73,7 +73,7 @@ mt_kbd_puts(unsigned char *s, unsigned len)
 }
 
 bool 
-mt_kbd_getch(unsigned char *c)
+mt_kbd_getch(char *c)
 {
 	return GetMsgQueue(key_current, c);
 }
@@ -122,13 +122,7 @@ int open_driver_keyboard(void){
 	return 0;
 }
 
-int read_driver_keyboard(unsigned char *buf, unsigned size){
-	if (mt_kbd_puts(buf, size))
-		return true;
-	return DRIVER_ERROR;
-}
-
-int write_driver_keyboard(unsigned char *buf, unsigned size){
+int read_driver_keyboard(char *buf, unsigned size){
 	bool notError = true;
 	int i = 0;
 	while (i < size && notError) {
@@ -139,6 +133,12 @@ int write_driver_keyboard(unsigned char *buf, unsigned size){
 		return DRIVER_ERROR;
 	else 
 		return notError;
+}
+
+int write_driver_keyboard(char *buf, unsigned size){
+	if (mt_kbd_puts(buf, size))
+		return true;
+	return DRIVER_ERROR;
 }
 
 int close_driver_keyboard(void) {
