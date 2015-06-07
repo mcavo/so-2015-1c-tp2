@@ -6,6 +6,7 @@ vprintk(const char *fmt, va_list args)
 	int i, n;
 	char c;
 	char buf[400];
+	// driver_t *cons = getDriver(CONS_DRIVER);
 
 	n = vsprintf(buf, fmt, args);
 	if ( n > 0 )
@@ -13,7 +14,11 @@ vprintk(const char *fmt, va_list args)
 		{
 			if ( (c = buf[i]) == '\n' )
 				mt_cons_putc('\r');
+				//(cons->write_driver)((unsigned char *)"\r", 0);
 			mt_cons_putc(c);
+			/*char *str;
+			sprintf(str, "%c", c);
+			(cons->write_driver)((unsigned char *)str, 0);*/
 		}
 
 	return n;

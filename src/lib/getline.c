@@ -25,6 +25,7 @@ getc(void)
 int
 getline(char *buf, unsigned size)
 {
+	// driver_t *cons = getDriver(CONS_DRIVER);
 	char *p = buf + strlen(buf), *end = buf + size - 1;
 	int c;
 	unsigned xi, yi, si;
@@ -33,6 +34,7 @@ getline(char *buf, unsigned size)
 	si = mt_cons_nscrolls();
 
 	mt_cons_puts(buf);
+	// (cons->write_driver)((unsigned char *)buf, 0);
 	mt_cons_clreol();
 	while (p < end)
 		switch (c = getc())
@@ -55,14 +57,17 @@ getline(char *buf, unsigned size)
 					mt_cons_clreom();
 					*p = 0;
 					mt_cons_puts(buf);
+					// (cons->write_driver)((unsigned char *)buf, 0);
 				}
 				else
 					mt_cons_puts(ERASEBACK);
+					// (cons->write_driver)((unsigned char *)ERASEBACK, 0);
 				break;
 
 			case '\r':
 			case '\n':
 				mt_cons_puts("\r\n");
+				// (cons->write_driver)((unsigned char *)"\r\n", 0);
 				*p++ = '\n';
 				*p = 0;
 				return p - buf;
@@ -74,10 +79,14 @@ getline(char *buf, unsigned size)
 			default:
 				*p++ = c;
 				mt_cons_putc(c);
+				/*char *str;
+				sprintf(str, "%c", c);
+				(cons->write_driver)((unsigned char *)str, 0);*/
 				break;
 		}
 
 	mt_cons_puts("<EOB>\r\n");
+	// (cons->write_driver)((unsigned char *)"<EOB>\r\n", 0);
 	*p = 0;
 	return p - buf;
 }

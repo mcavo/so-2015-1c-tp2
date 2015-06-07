@@ -11,3 +11,8 @@ mt_init_drivers(void)
 	driverTable[IDE_DRIVER] = *mt_ide_init();
 }
 
+driver_t *getDriver(int driver)
+{
+	return &driverTable[driver];
+}
+
