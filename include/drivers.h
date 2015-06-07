@@ -25,8 +25,8 @@ typedef struct
 {
 	char* name;
 	int (*open_driver)(void);
-	int (*read_driver)(unsigned char *buf, unsigned size);
-	int (*write_driver)(unsigned char *buf, unsigned size);
+	int (*read_driver)(char *buf, unsigned size);
+	int (*write_driver)(char *buf, unsigned size);
 	int (*close_driver)(void);
 	int (*ioctl_driver)(int type,int minor, ...);
 	int (*read_block_driver)(char *buf, int size);

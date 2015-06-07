@@ -257,9 +257,9 @@ bool mt_input_get(input_event_t *ev);
 bool mt_input_get_cond(input_event_t *ev);
 bool mt_input_get_timed(input_event_t *ev, unsigned timeout);
 
-bool mt_kbd_putch(unsigned char c);
-bool mt_kbd_puts(unsigned char *s, unsigned len);
-bool mt_kbd_getch(unsigned char *c);
+bool mt_kbd_putch(char c);
+bool mt_kbd_puts(char *s, unsigned len);
+bool mt_kbd_getch(char *c);
 bool mt_kbd_getch_cond(unsigned char *c);
 bool mt_kbd_getch_timed(unsigned char *c, unsigned timeout);
 
