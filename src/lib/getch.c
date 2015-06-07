@@ -3,10 +3,10 @@
 int 
 getch(void)
 {
-	// driver_t *input_driver = getDriver(INPUT_DRIVER);
+	driver_t *input_driver = getDriver(INPUT_DRIVER);
 	char c;
-	return mt_kbd_getch(&c) ? c : EOF;
-	// return (input_driver->read_driver)(&c, 1) ? c : EOF;
+	// return mt_kbd_getch(&c) ? c : EOF;
+	return (input_driver->read_driver)(&c, 1) ? c : EOF;
 }
 // 
 int 
