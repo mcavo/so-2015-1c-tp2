@@ -10,8 +10,9 @@
 #define IDE_DRIVER 3
 
 /* códigos de error */
-#define DRIVER_ERROR -1
-#define NO_METHOD_EXIST -2
+#define ERR_DRIVER_ERROR 		-1
+#define ERR_NO_METHOD_EXIST 	-2
+#define ERR_INVALID_ARGUMENT	-2
 
 /* drives's struct */
 typedef struct 
@@ -21,7 +22,7 @@ typedef struct
 	int (*read_driver)(char *buf, unsigned size);
 	int (*write_driver)(char *buf, unsigned size);
 	int (*close_driver)(void);
-	int (*ioctl_driver)(void);
+	int (*ioctl_driver)(int type,int minor, ...);
 	int (*read_block_driver)(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 	int (*write_block_driver)(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 }

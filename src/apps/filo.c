@@ -73,7 +73,8 @@ static void
 mprint(point where, char *msg, unsigned color)
 {
 	Atomic();
-	mt_cons_gotoxy(where.x, where.y);
+	//mt_cons_gotoxy(where.x, where.y);
+	ioctl_driver_cons(CONS_GOTOXY,2,where.x, where.y);
 	cprintk(color, BLACK, "%-10.10s", msg);
 	Unatomic();
 }
@@ -178,8 +179,10 @@ phil_main(int argc, char *argv[])
 	TLS = Malloc(sizeof(data));
 
 	// Inicializar display
-	mt_cons_clear();
-	cursor = mt_cons_cursor(false);
+	//mt_cons_clear();
+	ioctl_driver_cons(CONS_CLEAR,0);
+	//cursor = mt_cons_cursor(false);
+	ioctl_driver_cons(CONS_CURSOR,2,false,&cursor);
 	cprintk(LIGHTGREEN, BLACK, "Oprima cualquier tecla para salir");
 	for ( i = 0 ; i < NF ; i++ )
 		mprint(fork_position(i), "free", COLOR_FREE);
@@ -209,8 +212,10 @@ phil_main(int argc, char *argv[])
 	DeleteMonitor(mon);
 
 	// Reponer pantalla
-	mt_cons_clear();
-	mt_cons_cursor(cursor);
+	//mt_cons_clear();
+	ioctl_driver_cons(CONS_CLEAR,0);
+	//mt_cons_cursor(cursor);
+	ioctl_driver_cons(CONS_CURSOR,2,cursor,NULL);
 
 	// Liberar TLS
 	Free(TLS);

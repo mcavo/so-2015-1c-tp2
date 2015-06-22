@@ -72,12 +72,15 @@ mprint(int fg, int x, int y, char *format, ...)
 	va_list args;
 
 	Atomic();
-	mt_cons_gotoxy(x, y);
-	mt_cons_setattr(fg, BLACK);
+	//mt_cons_gotoxy(x, y);
+	ioctl_driver_cons(CONS_GOTOXY,2,x,y);
+	//mt_cons_setattr(fg, BLACK);
+	ioctl_driver_cons(CONS_SETATTR,2,fg,BLACK);
 	va_start(args, format);
 	n = vprintk(format, args);
 	va_end(args);
-	mt_cons_clreol();
+	//mt_cons_clreol();
+	ioctl_driver_cons(CONS_CLREOL,0);
 	Unatomic();
 	return n;
 }
@@ -170,8 +173,11 @@ monitor(void *args)
 int
 prodcons_main(int argc, char **argv)
 {
-	bool cursor = mt_cons_cursor(false);
-	mt_cons_clear();
+	//bool cursor = mt_cons_cursor(false);
+	bool cursor;
+	ioctl_driver_cons(CONS_CURSOR,2,false,&cursor);
+	//mt_cons_clear();
+	ioctl_driver_cons(CONS_CLEAR,0);
 
 	TLS = Malloc(sizeof(data));
 
@@ -203,7 +209,9 @@ prodcons_main(int argc, char **argv)
 
 	Free(TLS);
 
-	mt_cons_cursor(cursor);
-	mt_cons_clear();
+	//mt_cons_cursor(cursor);
+	ioctl_driver_cons(CONS_CURSOR,2,cursor,NULL);
+	//mt_cons_clear();
+	ioctl_driver_cons(CONS_CLEAR,0);
 	return 0;
 }

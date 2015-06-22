@@ -10,14 +10,20 @@ setkb_main(int argc, char **argv)
 	}
 	if ( argc == 1 )
 	{
-		printk("Teclado actual: %s\n", mt_ps2_getlayout());
+		const char * kname;
+		const char ** knames;
+		ioctl_driver_ps2(PS2_GETLAYOUT,1,&kname);
+		ioctl_driver_ps2(PS2_LAYOUTS,1,&knames);
+		printk("Teclado actual: %s\n", kname);
 		printk( "Disponibles:\n");
-		const char **p = mt_ps2_layouts();
+		const char **p = knames;
 		while ( *p )
 			printk("\t%s\n", *p++);
 		return 0;
 	}
-	if ( mt_ps2_setlayout(argv[1]) )
+	bool valid=false;
+	ioctl_driver_ps2(PS2_SETLAYOUT,2,argv[1],&valid);
+	if ( valid )
 	{
 		printk("Teclado actual: %s\n", argv[1]);
 		return 0;
