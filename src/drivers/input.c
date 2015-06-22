@@ -147,7 +147,25 @@ mt_input_setcurrent(unsigned consnum)		// Se llama con interrupciones deshabilit
 	ioctl_driver_cons(CONS_SETCURRENT,1,current);
 } */
 
+/*driver_t*
+mt_input_init()
+{
+	if (driver == NULL)
+		return ERR_INVALID_ARGUMENT;
+	unsigned i;
+	char buf [50];
 
+	for ( i = 0 ; i < NVCONS ; i++ )
+	{
+		sprintf(buf, "input events %u", i);
+		events[i] = CreateMsgQueue(buf, INPUTSIZE, sizeof(input_event_t));
+		sprintf(buf, "input keys %u", i);
+		keys[i] = CreateMsgQueue(buf, INPUTSIZE, 1);
+	}
+	input_current = input_focus = events[0];
+	key_current = key_focus = keys[0];
+	return generateDriver_keyboard();
+}*/
 bool
 mt_input_put(input_event_t *ev)
 {
