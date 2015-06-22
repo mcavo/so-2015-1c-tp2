@@ -432,15 +432,16 @@ process_scan(unsigned scode)
 
 	if ( ch == CA('[') )	// ALT-ESC: foco en consola 0
 	{
-		mt_input_setfocus(0);
-		//ioctl_driver_keyboard(INPUT_SETFOCUS,1,0);
+		//mt_input_setfocus(0);
+		ioctl_driver_keyboard(INPUT_SETFOCUS,1,0);
 		return;
 	}
 
 	if ( 1 <= ch && ch <= 0xFF )
-		mt_kbd_putch(ch);
+		ioctl_driver_keyboard(KBD_PUTCH,2,&ch,NULL);
+		//mt_kbd_putch(ch);
 		/* A normal character. */
-		//ioctl_driver_keyboard(KBD_PUTCH,2,&ch,NULL);
+		
 		
 	else if ( HOME <= ch && ch <= INSRT )
 	{
@@ -451,8 +452,8 @@ process_scan(unsigned scode)
 		(input_driver->write_driver)(s, 3);
 	}
 	else if ( AF1 <= ch && ch < AF1 + NVCONS - 1)
-		mt_input_setfocus(ch - AF1 + 1);
-		//ioctl_driver_keyboard(INPUT_SETFOCUS,1,ch - AF1 + 1);				// AltFn: cambio de foco
+		//mt_input_setfocus(ch - AF1 + 1);
+		ioctl_driver_keyboard(INPUT_SETFOCUS,1,ch - AF1 + 1);				// AltFn: cambio de foco
 	else
 	{
 		// Aquí deberían procesarse otras teclas especiales de procesamiento inmediato
@@ -488,8 +489,8 @@ kbd_task(void *arg)
 			event.kbd.scan_codes[idx++] = scode;
 			if ( !--more )
 			{
-				mt_input_put(&event);
-				//ioctl_driver_keyboard(INPUT_PUT,2,&event,NULL);
+				//mt_input_put(&event);
+				ioctl_driver_keyboard(INPUT_PUT,2,&event,NULL);
 				process_scan(event.kbd.scan_codes[0]);
 				process_scan(event.kbd.scan_codes[1]);
 				if ( idx == 3 )
@@ -499,8 +500,8 @@ kbd_task(void *arg)
 		else
 		{
 			event.kbd.scan_codes[0] = scode;
-			mt_input_put(&event);
-			//ioctl_driver_keyboard(INPUT_PUT,2,&event,NULL);
+			//mt_input_put(&event);
+			ioctl_driver_keyboard(INPUT_PUT,2,&event,NULL);
 			process_scan(scode);
 		}
 	}
@@ -566,8 +567,8 @@ mouse_task(void *arg)
 		// Si es un Intellimouse, leer el cuarto byte
 		if ( intelli )
 			GetMsgQueue(mouse_mq, &event.mouse.z);
-		mt_input_put(&event);
-		//ioctl_driver_keyboard(INPUT_PUT,2,&event,NULL);
+		//mt_input_put(&event);
+		ioctl_driver_keyboard(INPUT_PUT,2,&event,NULL);
 	}
 	return 0;
 }

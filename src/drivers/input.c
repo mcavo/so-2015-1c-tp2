@@ -29,7 +29,7 @@ mt_input_init(driver_t** driver)
 	*driver =  generateDriver_keyboard();
 	return 0;
 }
-/*
+
 void 
 mt_input_put(input_event_t *ev,bool *b)
 {
@@ -145,7 +145,7 @@ mt_input_setcurrent(unsigned consnum)		// Se llama con interrupciones deshabilit
 	key_current = keys[current];
 	//mt_cons_setcurrent(current);
 	ioctl_driver_cons(CONS_SETCURRENT,1,current);
-} */
+} 
 
 /*driver_t*
 mt_input_init()
@@ -165,7 +165,7 @@ mt_input_init()
 	input_current = input_focus = events[0];
 	key_current = key_focus = keys[0];
 	return generateDriver_keyboard();
-}*/
+}
 bool
 mt_input_put(input_event_t *ev)
 {
@@ -254,7 +254,7 @@ mt_input_setcurrent(unsigned consnum) // Se llama con interrupciones deshabilita
 	key_current = keys[current];
 	//mt_cons_setcurrent(current);
 	ioctl_driver_cons(CONS_SETCURRENT,1,current);
-}
+} */
 
 /* driver interface */
 
@@ -267,8 +267,8 @@ int read_driver_keyboard(char *buf, unsigned size){
 	bool notError = true;
 	int i = 0;
 	while (i < size && notError) {
-		notError = mt_kbd_getch(buf + i);
-		//mt_kbd_getch(buf + i, &notError);
+		//notError = mt_kbd_getch(buf + i);
+		mt_kbd_getch(buf + i, &notError);
 		i++;
 	}
 	if(!notError)
@@ -278,11 +278,12 @@ int read_driver_keyboard(char *buf, unsigned size){
 }
 
 int write_driver_keyboard(char *buf, unsigned size){
-	//bool b;
-	//mt_kbd_puts(buf, size,&b);
-	//if (b)
-	if (mt_kbd_puts(buf, size))
+	bool b;
+	mt_kbd_puts(buf, size,&b);
+	if (b)
 		return true;
+	//if (mt_kbd_puts(buf, size))
+	//	return true;
 	return ERR_DRIVER_ERROR;
 }
 
@@ -302,7 +303,6 @@ int ioctl_driver_keyboard(int type,int minor, ...) {
 			rta = mt_input_init(driver);
 			break;
 		}
-		/*
 		case INPUT_PUT: {
 			input_event_t* ev = va_arg(pa, input_event_t*);
 			bool* b = va_arg(pa, bool*);
@@ -371,7 +371,7 @@ int ioctl_driver_keyboard(int type,int minor, ...) {
 		case INPUT_SETCURRENT: {
 			unsigned consnum = va_arg(pa, unsigned);
 			mt_input_setcurrent(consnum);
-		}*/
+		}
 		default:
 			rta = ERR_NO_METHOD_EXIST;
 	}

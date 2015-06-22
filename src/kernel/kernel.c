@@ -161,8 +161,8 @@ mt_main(unsigned magic, boot_info_t *info)
 	// Pasarse a la consola 1, tomar el foco y ejecutar un shell
 	mt_curr_task->send_queue.name = "shell";
 	SetConsole(mt_curr_task, 1);
-	mt_input_setfocus(1);
-	//ioctl_driver_keyboard(INPUT_SETFOCUS,1,1);
+	//mt_input_setfocus(1);
+	ioctl_driver_keyboard(INPUT_SETFOCUS,1,1);
 	run_shell(NULL);
 }
 
@@ -233,8 +233,8 @@ mt_select_task(void)
 	TLS = mt_curr_task->tls;
 
 	/* Actualizar terminal actual */
-	mt_input_setcurrent(mt_curr_task->consnum);
-	//ioctl_driver_keyboard(INPUT_SETCURRENT,1,mt_curr_task->consnum);
+	//mt_input_setcurrent(mt_curr_task->consnum);
+	ioctl_driver_keyboard(INPUT_SETCURRENT,1,mt_curr_task->consnum);
 
 	/* Reponer contexto adicional */
 	if ( mt_curr_task->restore )
@@ -688,8 +688,8 @@ SetConsole(Task_t *task, unsigned consnum)
 	{
 		task->consnum = consnum;
 		if ( task == mt_curr_task )
-			mt_input_setcurrent(consnum);
-			//ioctl_driver_keyboard(INPUT_SETCURRENT,1,consnum);
+			ioctl_driver_keyboard(INPUT_SETCURRENT,1,consnum);
+			//mt_input_setcurrent(consnum);
 	}
 	SetInts(ints);
 	return true;
