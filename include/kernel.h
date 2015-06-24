@@ -178,7 +178,6 @@ enum COLORS
 
 #define NVCONS 9
 
-#define  CONS_INIT 				0
 #define  CONS_CLEAR 			1
 #define  CONS_CLREOL 			2
 #define  CONS_CLREOM			3
@@ -201,6 +200,7 @@ enum COLORS
 #define  CONS_SETCURRENT		20
 #define  CONS_SET0				21
 
+driver_t* mt_cons_init(void);
 int ioctl_driver_cons(int type,int minor, ...);
 
 /* input.c */ 
@@ -262,22 +262,7 @@ input_event_t;
 #define  INPUT_SETCURRENT		11
 
 int ioctl_driver_keyboard(int type,int minor, ...);
-
-//driver_t* mt_input_init(void);
-
-//bool mt_input_put(input_event_t *ev);
-//bool mt_input_get(input_event_t *ev);
-//bool mt_input_get_cond(input_event_t *ev);
-//bool mt_input_get_timed(input_event_t *ev, unsigned timeout);
-
-//bool mt_kbd_putch(char c);
-//bool mt_kbd_puts(char *s, unsigned len);
-//bool mt_kbd_getch(char *c);
-//bool mt_kbd_getch_cond(unsigned char *c);
-//bool mt_kbd_getch_timed(unsigned char *c, unsigned timeout);
-
-//void mt_input_setfocus(unsigned consnum);
-//void mt_input_setcurrent(unsigned consnum);
+driver_t* mt_input_init(void);
 
 /* ps2.c */
 
@@ -287,18 +272,19 @@ int ioctl_driver_keyboard(int type,int minor, ...);
 #define  PS2_LAYOUTS 			3
 
 int ioctl_driver_ps2(int type,int minor, ...);
+driver_t* mt_ps2_init(void);
 
 /* ide.c */
 
 #define SECTOR_SIZE 512		// Tamaño de un sector
 
-#define	 IDE_INIT 				0
-#define	 IDE_READ 				1
-#define	 IDE_WRITE 				2
 #define	 IDE_MODEL 				3
 #define	 IDE_CAPACITY 			4
 
 int ioctl_driver_ide(int type,int minor, ...);
+driver_t* mt_ide_init(void);
+unsigned mt_ide_read(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
+unsigned mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 
 enum ide_minors				// Números de los discos
 {

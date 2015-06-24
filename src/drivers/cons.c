@@ -151,31 +151,7 @@ put(unsigned char ch)
 }
 
 /* Interfaz pública */
-/*
-int mt_cons_init(driver_t ** driver);
-void mt_cons_clear(void);
-void mt_cons_clreol(void);
-void mt_cons_clreom(void);
-int mt_cons_nrows(unsigned * numrows);
-int mt_cons_ncols(unsigned * numcols);
-int mt_cons_nscrolls(unsigned * numscrolls);
-int mt_cons_getxy(unsigned *x, unsigned *y);
-void mt_cons_gotoxy(unsigned x, unsigned y);
-void mt_cons_setattr(unsigned fg, unsigned bg);
-int mt_cons_getattr(unsigned *fg, unsigned *bg);
-void mt_cons_cursor(bool on, bool * prevcursor);
-void mt_cons_putc(char ch);
-void mt_cons_puts(const char *str);
-void mt_cons_cr(void);
-void mt_cons_nl(void);
-void mt_cons_tab(void);
-void mt_cons_bs(void);
-void mt_cons_raw(bool on, bool * prevraw);
-void mt_cons_setfocus(unsigned consnum);
-void mt_cons_setcurrent(unsigned consnum);
-void mt_cons_set0(unsigned * prevv);
-*/
-/**********/
+
 void
 mt_cons_clreol(void)
 {
@@ -411,8 +387,8 @@ mt_cons_set0(unsigned * prevv)
 		* prevv = prev;
 }
 
-int
-mt_cons_init(driver_t ** driver)
+driver_t *
+mt_cons_init()
 {
 	unsigned i;
 
@@ -426,8 +402,7 @@ mt_cons_init(driver_t ** driver)
 	// Inicializar las consolas virtuales
 	for (i = 0; i < NVCONS; i++)
 		init_vcons(i);
-	* driver = generateDriver_cons();
-	return 0;
+	return generateDriver_cons();
 }
 
 void
@@ -475,11 +450,6 @@ int ioctl_driver_cons(int type,int minor, ...) {
 	va_list pa;
 	va_start(pa, minor);
 	switch(type){
-		case CONS_INIT: {
-			driver_t** driver = va_arg(pa, driver_t**);
-			rta = mt_cons_init(driver);
-			break;
-		}
 		case CONS_CLEAR: {
 			mt_cons_clear();
 			break;

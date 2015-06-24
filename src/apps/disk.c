@@ -47,7 +47,7 @@ check_disk(unsigned minor)
 	printk("    Soporta lectura/escritura multiple de %u sectores\n", maxm);
 	start = Time();
 	for ( n = 0 ; n < (1024 * 1024) / (maxm * SECTOR_SIZE) ; n++ ) 
-		// mt_ide_write(minor, 0, maxm, sectors);
+		//mt_ide_write(minor, 0, maxm, sectors);
 		maxm = (unsigned)(disc->write_block_driver)(minor, 0, maxm, sectors);
 	elapsed = Time() - start;
 	printk("    Tiempo de escritura de 1 MB: %u milisegundos\n", elapsed);

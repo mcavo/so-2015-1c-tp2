@@ -9,11 +9,9 @@ static MsgQueue_t *input_focus, *input_current, *key_focus, *key_current;
 static unsigned focus, current;
 static driver_t *generateDriver_keyboard();
 
-int 
-mt_input_init(driver_t** driver)
+driver_t*
+mt_input_init()
 {
-	if (driver == NULL)
-		return ERR_INVALID_ARGUMENT;
 	unsigned i;
 	char buf [50];
 
@@ -26,8 +24,7 @@ mt_input_init(driver_t** driver)
 	}
 	input_current = input_focus = events[0];
 	key_current = key_focus = keys[0];
-	*driver =  generateDriver_keyboard();
-	return 0;
+	return generateDriver_keyboard();
 }
 
 void 
@@ -147,114 +144,6 @@ mt_input_setcurrent(unsigned consnum)		// Se llama con interrupciones deshabilit
 	ioctl_driver_cons(CONS_SETCURRENT,1,current);
 } 
 
-/*driver_t*
-mt_input_init()
-{
-	if (driver == NULL)
-		return ERR_INVALID_ARGUMENT;
-	unsigned i;
-	char buf [50];
-
-	for ( i = 0 ; i < NVCONS ; i++ )
-	{
-		sprintf(buf, "input events %u", i);
-		events[i] = CreateMsgQueue(buf, INPUTSIZE, sizeof(input_event_t));
-		sprintf(buf, "input keys %u", i);
-		keys[i] = CreateMsgQueue(buf, INPUTSIZE, 1);
-	}
-	input_current = input_focus = events[0];
-	key_current = key_focus = keys[0];
-	return generateDriver_keyboard();
-}
-bool
-mt_input_put(input_event_t *ev)
-{
-	return PutMsgQueueCond(input_focus, ev);
-}
-
-bool
-mt_input_get(input_event_t *ev)
-{
-	return GetMsgQueue(input_current, ev);
-}
-
-bool
-mt_input_get_cond(input_event_t *ev)
-{
-	return GetMsgQueueCond(input_current, ev);
-}
-
-bool
-mt_input_get_timed(input_event_t *ev, unsigned timeout)
-{
-	return GetMsgQueueTimed(input_current, ev, timeout);
-}
-
-bool
-mt_kbd_putch(char c)
-{
-	return PutMsgQueueCond(key_focus, &c);
-}
-
-bool
-mt_kbd_puts(char *s, unsigned len)
-{
-	Atomic();
-	if ( INPUTSIZE - AvailMsgQueue(key_focus) < len )
-	{
-		Unatomic();
-		return false;
-	}
-	while ( len-- )
-		PutMsgQueueCond(key_focus, s++);
-	Unatomic();
-	return true;
-}
-
-bool
-mt_kbd_getch(char *c)
-{
-	return GetMsgQueue(key_current, c);
-}
-
-bool
-mt_kbd_getch_cond(unsigned char *c)
-{
-	return GetMsgQueueCond(key_current, c);
-}
-
-bool
-mt_kbd_getch_timed(unsigned char *c, unsigned timeout)
-{
-	return GetMsgQueueTimed(key_current, c, timeout);
-}
-
-void
-mt_input_setfocus(unsigned consnum) // No se llama desde interrupciones
-{
-	Atomic();
-	if ( consnum != focus )
-	{
-		focus = consnum;
-		input_focus = events[focus];
-		key_focus = keys[focus];
-		//mt_cons_setfocus(focus);
-		ioctl_driver_cons(CONS_SETFOCUS,1,focus);
-	}
-	Unatomic();
-}
-
-void
-mt_input_setcurrent(unsigned consnum) // Se llama con interrupciones deshabilitadas
-{
-	if ( consnum == current )
-		return;
-	current = consnum;
-	input_current = events[current];
-	key_current = keys[current];
-	//mt_cons_setcurrent(current);
-	ioctl_driver_cons(CONS_SETCURRENT,1,current);
-} */
 
 /* driver interface */
 
@@ -298,11 +187,6 @@ int ioctl_driver_keyboard(int type,int minor, ...) {
 	va_list pa;
 	va_start(pa, minor);
 	switch(type){
-		case INPUT_INIT: {
-			driver_t** driver = va_arg(pa, driver_t**);
-			rta = mt_input_init(driver);
-			break;
-		}
 		case INPUT_PUT: {
 			input_event_t* ev = va_arg(pa, input_event_t*);
 			bool* b = va_arg(pa, bool*);

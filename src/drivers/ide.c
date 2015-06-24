@@ -423,11 +423,9 @@ ide_interrupt(unsigned irq)
 // Interfaz pública
 
 // Inicialización
-int
-mt_ide_init(driver_t **driver)
+driver_t*
+mt_ide_init()
 {
-	if (driver==NULL)
-		return ERR_INVALID_ARGUMENT;
 	int i, j;
 	ide_device *device;
 	ide_controller *controller;
@@ -461,24 +459,21 @@ mt_ide_init(driver_t **driver)
 		mt_set_int_handler(controller->irq, ide_interrupt);
 		mt_enable_irq(controller->irq);
 	}
-	*driver = generateDriver_ide();
-	return 0;
+	return generateDriver_ide();
 }
 
 // Leer sectores. Devuelve la cantidad leída, que puede ser menor que la solicitada.
-void
-mt_ide_read(unsigned minor, unsigned block, unsigned nblocks, void *buffer, unsigned * countread)
+unsigned
+mt_ide_read(unsigned minor, unsigned block, unsigned nblocks, void *buffer)
 {
-	if (countread != NULL)
-		*countread = read_write_blocks(minor, block, nblocks, buffer, READ);
+	return read_write_blocks(minor, block, nblocks, buffer, READ);
 }
 
 // Escribir sectores. Devuelve la cantidad escrita, que puede ser menor que la solicitada.
-void
-mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer, unsigned * countwrite)
+unsigned
+mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer)
 {
-	if (countwrite != NULL)
-		*countwrite = read_write_blocks(minor, block, nblocks, buffer, WRITE);
+	return read_write_blocks(minor, block, nblocks, buffer, WRITE);
 }
 
 
@@ -565,15 +560,11 @@ int ioctl_driver_ide(int type,int minor, ...) {
 }
 
 int read_block_driver_ide(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 
-	unsigned count;
-	mt_ide_read(minor, block, nblocks, buffer, &count);
-	return count;
+	return mt_ide_read(minor, block, nblocks, buffer);
 }
 	
 int write_block_driver_ide(unsigned minor, unsigned block, unsigned nblocks, void *buffer) {
-	unsigned count;
-	mt_ide_write(minor, block, nblocks, buffer, &count);
-	return count;
+	return mt_ide_write(minor, block, nblocks, buffer);
 }
 
 driver_t *generateDriver_ide() {
