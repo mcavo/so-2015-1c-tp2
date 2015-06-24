@@ -13,7 +13,7 @@ mt_init_drivers(void)
 	//driverTable[INPUT_DRIVER] = *mt_input_init();
 	driver_t * inputdriv = malloc(sizeof(driver_t));
 	ioctl_driver_keyboard(INPUT_INIT,1,&inputdriv);
-	driverTable[CONS_DRIVER]= *inputdriv;
+	driverTable[INPUT_DRIVER]= *inputdriv;
 
 	//driverTable[PS2_DRIVER] = *mt_ps2_init();
 	driver_t * ps2driv = malloc(sizeof(driver_t));
