@@ -36,8 +36,7 @@ typedef struct
 }
 driver_t;
 
-/*ide ioctl*/
-#define MODEL 'm'
-#define CAPACITY 'c'
+
+driver_t *getDriver(int driver);
 
 #endif

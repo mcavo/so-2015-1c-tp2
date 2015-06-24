@@ -522,6 +522,7 @@ int close_driver_ide(void) {
 	return 0;
 }
 
+
 /*
 ioctl para IDE
 
