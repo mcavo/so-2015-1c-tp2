@@ -16,7 +16,7 @@
 #define DEFATTR ((BLACK << 12) | (LIGHTGRAY << 8))
 
 #define BS 0x08
-#define NAME "Cons"
+#define NAME_CONS "Cons"
 
 typedef unsigned short row[NUMCOLS];
 
@@ -402,48 +402,47 @@ mt_cons_set0(void)
 
 /* driver interface */
 
-int open_driver(void){
+int open_driver_cons(void){
 	//TODO: ver si vamos hacer algo
 	return 0;
 }
 
-int read_driver(char *buf, int size){
+int read_driver_cons(unsigned char *buf, unsigned size){
 	//TODO: como lo implementamos??
 	return NO_METHOD_EXIST;
 }
 
-int write_driver(char *buf, int size){
-	char *data = malloc(sizeof(char) * size);
-	memcpy(data, buf, size);
-	mt_cons_puts(data);
-	return size;
+int write_driver_cons(unsigned char *buf, unsigned size){
+	//TODO: ver si hay forma de usar el size o implementar eso.
+	mt_cons_puts(buf);
+	return 0;
 }
 
-int close_driver(void) {
+int close_driver_cons(void) {
 	//TODO: ver si vamos a hacer algo
 	return 0;
 }
 
-int ioctl_driver(void) {
+int ioctl_driver_cons(void) {
 	//TODO: copiar prototipo y funcionamiento de printf
 	return 0;
 }
 
-int read_block_driver(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 
+int read_block_driver_cons(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 
 	return NO_METHOD_EXIST;
 }
 	
-int write_block_driver(unsigned minor, unsigned block, unsigned nblocks, void *buffer) {
+int write_block_driver_cons(unsigned minor, unsigned block, unsigned nblocks, void *buffer) {
 	return NO_METHOD_EXIST;
 }
 
 driver_t *generateDriver_cons() {
 	driver_t *driver = malloc(sizeof(driver_t));
-	driver->name = NAME;
-	driver->read_driver = *read_driver;
-	driver->write_driver = *write_driver;
-	driver->ioctl_driver = *ioctl_driver;
-	driver->read_block_driver = *read_block_driver;
-	driver->write_block_driver = *write_block_driver;
+	driver->name = NAME_CONS;
+	driver->read_driver = *read_driver_cons;
+	driver->write_driver = *write_driver_cons;
+	driver->ioctl_driver = *ioctl_driver_cons;
+	driver->read_block_driver = *read_block_driver_cons;
+	driver->write_block_driver = *write_block_driver_cons;
 	return driver;
 }

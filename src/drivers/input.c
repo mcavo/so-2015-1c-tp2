@@ -1,13 +1,15 @@
 #include <kernel.h>
 
 #define INPUTSIZE 32
+#define NAME_KEYBOARD "Keyboard"
 
 static MsgQueue_t *events[NVCONS];
 static MsgQueue_t *keys[NVCONS];
 static MsgQueue_t *input_focus, *input_current, *key_focus, *key_current;
 static unsigned focus, current;
+static driver_t *generateDriver_keyboard();
 
-void 
+driver_t* 
 mt_input_init(void)
 {
 	unsigned i;
@@ -22,6 +24,7 @@ mt_input_init(void)
 	}
 	input_current = input_focus = events[0];
 	key_current = key_focus = keys[0];
+	return generateDriver_keyboard();
 }
 
 bool 
@@ -112,3 +115,57 @@ mt_input_setcurrent(unsigned consnum)		// Se llama con interrupciones deshabilit
 	mt_cons_setcurrent(current);
 }
 
+/* driver interface */
+
+int open_driver_keyboard(void){
+	//TODO: ver si vamos hacer algo
+	return 0;
+}
+
+int read_driver_keyboard(unsigned char *buf, unsigned size){
+	if (mt_kbd_puts(buf, size))
+		return true;
+	return DRIVER_ERROR;
+}
+
+int write_driver_keyboard(unsigned char *buf, unsigned size){
+	bool notError = true;
+	int i = 0;
+	while (i < size && notError) {
+		notError = mt_kbd_getch(buf + i);
+		i++;
+	}
+	if(!notError)
+		return DRIVER_ERROR;
+	else 
+		return notError;
+}
+
+int close_driver_keyboard(void) {
+	//TODO: ver si vamos a hacer algo
+	return 0;
+}
+
+int ioctl_driver_keyboard(void) {
+	//TODO: copiar prototipo y funcionamiento de printf
+	return 0;
+}
+
+int read_block_driver_keyboard(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 
+	return NO_METHOD_EXIST;
+}
+	
+int write_block_driver_keyboard(unsigned minor, unsigned block, unsigned nblocks, void *buffer) {
+	return NO_METHOD_EXIST;
+}
+
+driver_t *generateDriver_keyboard() {
+	driver_t *driver = malloc(sizeof(driver_t));
+	driver->name = NAME_KEYBOARD;
+	driver->read_driver = *read_driver_keyboard;
+	driver->write_driver = *write_driver_keyboard;
+	driver->ioctl_driver = *ioctl_driver_keyboard;
+	driver->read_block_driver = *read_block_driver_keyboard;
+	driver->write_block_driver = *write_block_driver_keyboard;
+	return driver;
+}

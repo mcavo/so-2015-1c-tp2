@@ -521,12 +521,12 @@ int open_driver_ide(void){
 	return 0;
 }
 
-int read_driver_ide(char *buf, int size){
+int read_driver_ide(unsigned char *buf, unsigned size){
 	//TODO: implementar si llegamos
 	return NO_METHOD_EXIST;
 }
 
-int write_driver_ide(char *buf, int size){
+int write_driver_ide(unsigned char *buf, unsigned size){
 	//TODO: implementar si llegamos
 	return NO_METHOD_EXIST;
 }

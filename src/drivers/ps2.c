@@ -14,6 +14,7 @@
 
 #include <kernel.h>
 
+#define NAME_PS2 "ps2"
 // Definiciones para el mapa de teclas (de Minix: keymap.h).
 
 #define C(c)    ((c) & 0x1F)    /* Map to control code          */
@@ -565,7 +566,7 @@ mouse_task(void *arg)
 
 // Interfaz
 
-drive_t*
+driver_t*
 mt_ps2_init(void)
 {
 	// Establecer la distribución de teclado inicial.
@@ -583,7 +584,7 @@ mt_ps2_init(void)
 	Task_t *t = CreateTask(kbd_task, 0, NULL, "keyboard", INPUTPRIO);
 	Protect(t);
 	Ready(t);
-	t = CreateTask(mouse_task, 0, NULL, "mouse", INPUTPRIO);
+ 	t = CreateTask(mouse_task, 0, NULL, "mouse", INPUTPRIO);
 	Protect(t);
 	Ready(t);
 
@@ -595,6 +596,7 @@ mt_ps2_init(void)
 
 	// Sincronizar el estado de los LEDs del teclado
 	set_leds();	
+	return generateDriver_ps2();
 }
 
 const char *
@@ -632,16 +634,13 @@ int open_driver_ps2(void){
 	return 0;
 }
 
-int read_driver_cons_ps2(char *buf, int size){
+int read_driver_ps2(unsigned char *buf, unsigned size){
 	//TODO: como lo implementamos??
 	return NO_METHOD_EXIST;
 }
 
-int write_driver_ps2(char *buf, int size){
-	char *data = malloc(sizeof(char) * size);
-	memcpy(data, buf, size);
-	mt_cons_puts(data);
-	return size;
+int write_driver_ps2(unsigned char *buf, unsigned size){
+	return NO_METHOD_EXIST;
 }
 
 int close_driver_ps2(void) {
@@ -666,9 +665,9 @@ driver_t *generateDriver_ps2() {
 	driver_t *driver = malloc(sizeof(driver_t));
 	driver->name = NAME_PS2;
 	driver->read_driver = *read_driver_ps2;
-	driver->write_driver = *write_driver_cons_ps2;
-	driver->ioctl_driver = *ioctl_driver_cons_ps2;
-	driver->read_block_driver = *read_block_driver_cons_ps2;
-	driver->write_block_driver = *write_block_driver_cons_ps2;
+	driver->write_driver = *write_driver_ps2;
+	driver->ioctl_driver = *ioctl_driver_ps2;
+	driver->read_block_driver = *read_block_driver_ps2;
+	driver->write_block_driver = *write_block_driver_ps2;
 	return driver;
 }
