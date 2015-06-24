@@ -575,11 +575,9 @@ mouse_task(void *arg)
 
 // Interfaz
 
-int
-mt_ps2_init(driver_t** driver)
+driver_t*
+mt_ps2_init()
 {
-	if (driver==NULL)
-		return ERR_INVALID_ARGUMENT;
 	// Establecer la distribución de teclado inicial.
 	keymap = keymaps[0];
 	kbd_name = names[0];
@@ -607,8 +605,7 @@ mt_ps2_init(driver_t** driver)
 
 	// Sincronizar el estado de los LEDs del teclado
 	set_leds();	
-	*driver = generateDriver_ps2();
-	return 0;
+	return generateDriver_ps2();
 }
 
 int
@@ -677,11 +674,6 @@ int ioctl_driver_ps2(int type,int minor, ...) {
 	va_list pa;
 	va_start(pa, minor);
 	switch(type){
-		case PS2_INIT: {
-			driver_t** driver = va_arg(pa, driver_t**);
-			rta = mt_ps2_init(driver);
-			break;
-		}
 		case PS2_GETLAYOUT: {
 			const char** name = va_arg(pa, const char**);
 			rta = mt_ps2_getlayout(name);
