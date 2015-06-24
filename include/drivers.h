@@ -2,10 +2,6 @@
 #define DRIVERS_H
 
 #include <kernel.h>
-#include <stdarg.h>
-#include <stdlib.h>
-#include <stdio.h>
-#include <string.h>
 
 
 #define MAX_DRIVERS_COUNT 6
@@ -16,8 +12,8 @@
 
 /* códigos de error */
 
-#define DRIVER_ERROR -1
-#define NO_METHOD_EXIST -2
+#define ERR_DRIVER_ERROR -1
+#define ERR_NO_METHOD_EXIST -2
 #define ERROR_NO_DEVICE -3
 #define ERROR_NO_MINOR -4
 #define ERR_INVALID_ARGUMENT	-5

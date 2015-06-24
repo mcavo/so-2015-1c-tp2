@@ -89,8 +89,6 @@ Secciones de salida descartadas
  .note.GNU-stack
                 0x0000000000000000        0x0 obj/input.o
  .note.GNU-stack
-                0x0000000000000000        0x0 obj/pruebaIoctl.o
- .note.GNU-stack
                 0x0000000000000000        0x0 obj/ide.o
  .note.GNU-stack
                 0x0000000000000000        0x0 obj/drivers.o
@@ -150,7 +148,6 @@ LOAD obj/string.o
 LOAD obj/strtol.o
 LOAD obj/ps2.o
 LOAD obj/input.o
-LOAD obj/pruebaIoctl.o
 LOAD obj/ide.o
 LOAD obj/drivers.o
 LOAD obj/cons.o
@@ -477,7 +474,6 @@ LOAD obj/timer.o
                 0x000000000010c1ff                ioctl_driver_keyboard
                 0x000000000010c48d                read_block_driver_keyboard
                 0x000000000010c497                write_block_driver_keyboard
- .text          0x000000000010c4f6        0x0 obj/pruebaIoctl.o
  .text          0x000000000010c4f6      0xd38 obj/ide.o
                 0x000000000010ce32                mt_ide_init
                 0x000000000010cfdf                mt_ide_read
@@ -807,7 +803,6 @@ LOAD obj/timer.o
                 0x00000000001152e0                keymap_spanish
                 0x00000000001158e0                keymap_us_std
  .data          0x0000000000115f05        0x0 obj/input.o
- .data          0x0000000000115f05        0x0 obj/pruebaIoctl.o
  *fill*         0x0000000000115f05       0x1b 
  .data          0x0000000000115f20      0x1a0 obj/ide.o
  .data          0x00000000001160c0        0x0 obj/drivers.o
@@ -870,7 +865,6 @@ LOAD obj/timer.o
  .bss           0x000000000011e3ac       0x5c obj/ps2.o
  *fill*         0x000000000011e408       0x18 
  .bss           0x000000000011e420       0x7c obj/input.o
- .bss           0x000000000011e49c        0x0 obj/pruebaIoctl.o
  .bss           0x000000000011e49c        0x0 obj/ide.o
  *fill*         0x000000000011e49c        0x4 
  .bss           0x000000000011e4a0       0xc0 obj/drivers.o
@@ -952,7 +946,6 @@ LOAD obj/timer.o
  .comment       0x0000000000000000       0x25 obj/strtol.o
  .comment       0x0000000000000000       0x25 obj/ps2.o
  .comment       0x0000000000000000       0x25 obj/input.o
- .comment       0x0000000000000000       0x25 obj/pruebaIoctl.o
  .comment       0x0000000000000000       0x25 obj/ide.o
  .comment       0x0000000000000000       0x25 obj/drivers.o
  .comment       0x0000000000000000       0x25 obj/cons.o
@@ -970,7 +963,7 @@ LOAD obj/timer.o
 .debug_sfnames
  *(.debug_sfnames)
 
-.debug_aranges  0x0000000000000000      0x5f8
+.debug_aranges  0x0000000000000000      0x5e0
  *(.debug_aranges)
  .debug_aranges
                 0x0000000000000000       0x20 obj/kstart.o
@@ -1059,20 +1052,18 @@ LOAD obj/timer.o
  .debug_aranges
                 0x0000000000000540       0x20 obj/input.o
  .debug_aranges
-                0x0000000000000560       0x18 obj/pruebaIoctl.o
+                0x0000000000000560       0x20 obj/ide.o
  .debug_aranges
-                0x0000000000000578       0x20 obj/ide.o
+                0x0000000000000580       0x20 obj/drivers.o
  .debug_aranges
-                0x0000000000000598       0x20 obj/drivers.o
+                0x00000000000005a0       0x20 obj/cons.o
  .debug_aranges
-                0x00000000000005b8       0x20 obj/cons.o
- .debug_aranges
-                0x00000000000005d8       0x20 obj/timer.o
+                0x00000000000005c0       0x20 obj/timer.o
 
 .debug_pubnames
  *(.debug_pubnames)
 
-.debug_info     0x0000000000000000     0xe1ed
+.debug_info     0x0000000000000000     0xe17b
  *(.debug_info .gnu.linkonce.wi.*)
  .debug_info    0x0000000000000000       0x63 obj/kstart.o
  .debug_info    0x0000000000000063      0x248 obj/events.o
@@ -1117,13 +1108,12 @@ LOAD obj/timer.o
  .debug_info    0x000000000000aeb5      0x213 obj/strtol.o
  .debug_info    0x000000000000b0c8      0xdf1 obj/ps2.o
  .debug_info    0x000000000000beb9      0x989 obj/input.o
- .debug_info    0x000000000000c842       0x72 obj/pruebaIoctl.o
- .debug_info    0x000000000000c8b4      0xac1 obj/ide.o
- .debug_info    0x000000000000d375      0x197 obj/drivers.o
- .debug_info    0x000000000000d50c      0xc5c obj/cons.o
- .debug_info    0x000000000000e168       0x85 obj/timer.o
+ .debug_info    0x000000000000c842      0xac1 obj/ide.o
+ .debug_info    0x000000000000d303      0x197 obj/drivers.o
+ .debug_info    0x000000000000d49a      0xc5c obj/cons.o
+ .debug_info    0x000000000000e0f6       0x85 obj/timer.o
 
-.debug_abbrev   0x0000000000000000     0x3970
+.debug_abbrev   0x0000000000000000     0x394a
  *(.debug_abbrev)
  .debug_abbrev  0x0000000000000000       0x14 obj/kstart.o
  .debug_abbrev  0x0000000000000014      0x128 obj/events.o
@@ -1168,13 +1158,12 @@ LOAD obj/timer.o
  .debug_abbrev  0x0000000000002d2a       0xd1 obj/strtol.o
  .debug_abbrev  0x0000000000002dfb      0x2b0 obj/ps2.o
  .debug_abbrev  0x00000000000030ab      0x20c obj/input.o
- .debug_abbrev  0x00000000000032b7       0x26 obj/pruebaIoctl.o
- .debug_abbrev  0x00000000000032dd      0x283 obj/ide.o
- .debug_abbrev  0x0000000000003560       0xe7 obj/drivers.o
- .debug_abbrev  0x0000000000003647      0x2c9 obj/cons.o
- .debug_abbrev  0x0000000000003910       0x60 obj/timer.o
+ .debug_abbrev  0x00000000000032b7      0x283 obj/ide.o
+ .debug_abbrev  0x000000000000353a       0xe7 obj/drivers.o
+ .debug_abbrev  0x0000000000003621      0x2c9 obj/cons.o
+ .debug_abbrev  0x00000000000038ea       0x60 obj/timer.o
 
-.debug_line     0x0000000000000000     0x38f8
+.debug_line     0x0000000000000000     0x38dd
  *(.debug_line .debug_line.* .debug_line_end)
  .debug_line    0x0000000000000000       0x48 obj/kstart.o
  .debug_line    0x0000000000000048       0xcd obj/events.o
@@ -1219,16 +1208,15 @@ LOAD obj/timer.o
  .debug_line    0x0000000000002baf      0x217 obj/strtol.o
  .debug_line    0x0000000000002dc6      0x32b obj/ps2.o
  .debug_line    0x00000000000030f1      0x1b2 obj/input.o
- .debug_line    0x00000000000032a3       0x1d obj/pruebaIoctl.o
- .debug_line    0x00000000000032c0      0x2e5 obj/ide.o
- .debug_line    0x00000000000035a5       0x68 obj/drivers.o
- .debug_line    0x000000000000360d      0x2a0 obj/cons.o
- .debug_line    0x00000000000038ad       0x4b obj/timer.o
+ .debug_line    0x00000000000032a3      0x2e7 obj/ide.o
+ .debug_line    0x000000000000358a       0x68 obj/drivers.o
+ .debug_line    0x00000000000035f2      0x2a0 obj/cons.o
+ .debug_line    0x0000000000003892       0x4b obj/timer.o
 
 .debug_frame
  *(.debug_frame)
 
-.debug_str      0x0000000000000000     0x2036
+.debug_str      0x0000000000000000     0x200d
  *(.debug_str)
  .debug_str     0x0000000000000000      0x182 obj/events.o
                                         0x1ab (tamaño antes de la relajación)
@@ -1288,35 +1276,33 @@ LOAD obj/timer.o
                                         0x13d (tamaño antes de la relajación)
  .debug_str     0x0000000000001428       0x1d obj/getch.o
                                         0x18a (tamaño antes de la relajación)
- .debug_str     0x0000000000001445       0xc9 obj/sprintf.o
+ .debug_str     0x0000000000001445       0xd2 obj/sprintf.o
                                         0x227 (tamaño antes de la relajación)
- .debug_str     0x000000000000150e       0x22 obj/rand.o
+ .debug_str     0x0000000000001517       0x22 obj/rand.o
                                          0xf2 (tamaño antes de la relajación)
- .debug_str     0x0000000000001530       0x43 obj/split.o
+ .debug_str     0x0000000000001539       0x43 obj/split.o
                                         0x125 (tamaño antes de la relajación)
- .debug_str     0x0000000000001573        0xf obj/atoi.o
+ .debug_str     0x000000000000157c        0xf obj/atoi.o
                                          0xda (tamaño antes de la relajación)
- .debug_str     0x0000000000001582       0x23 obj/states.o
+ .debug_str     0x000000000000158b       0x23 obj/states.o
                                          0xf6 (tamaño antes de la relajación)
- .debug_str     0x00000000000015a5       0x68 obj/malloc.o
+ .debug_str     0x00000000000015ae       0x68 obj/malloc.o
                                         0x152 (tamaño antes de la relajación)
- .debug_str     0x000000000000160d       0x84 obj/string.o
+ .debug_str     0x0000000000001616       0x84 obj/string.o
                                         0x155 (tamaño antes de la relajación)
- .debug_str     0x0000000000001691       0x5a obj/strtol.o
+ .debug_str     0x000000000000169a       0x5a obj/strtol.o
                                          0xf9 (tamaño antes de la relajación)
- .debug_str     0x00000000000016eb      0x268 obj/ps2.o
+ .debug_str     0x00000000000016f4      0x268 obj/ps2.o
                                         0x693 (tamaño antes de la relajación)
- .debug_str     0x0000000000001953      0x1d2 obj/input.o
+ .debug_str     0x000000000000195c      0x1d2 obj/input.o
                                         0x424 (tamaño antes de la relajación)
- .debug_str     0x0000000000001b25       0x32 obj/pruebaIoctl.o
-                                        0x126 (tamaño antes de la relajación)
- .debug_str     0x0000000000001b57      0x1dc obj/ide.o
+ .debug_str     0x0000000000001b2e      0x1dc obj/ide.o
                                         0x403 (tamaño antes de la relajación)
- .debug_str     0x0000000000001d33       0x3c obj/drivers.o
+ .debug_str     0x0000000000001d0a       0x3c obj/drivers.o
                                         0x17b (tamaño antes de la relajación)
- .debug_str     0x0000000000001d6f      0x2a4 obj/cons.o
+ .debug_str     0x0000000000001d46      0x2a4 obj/cons.o
                                         0x523 (tamaño antes de la relajación)
- .debug_str     0x0000000000002013       0x23 obj/timer.o
+ .debug_str     0x0000000000001fea       0x23 obj/timer.o
                                          0xf5 (tamaño antes de la relajación)
 
 .debug_loc
