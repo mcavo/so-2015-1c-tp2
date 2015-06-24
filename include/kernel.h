@@ -6,6 +6,7 @@
 #include <const.h>
 #include "drivers.h"
 
+
 #define MTASK_VERSION	"20.03"		// Nro. de versión de MTask
 
 // Registros empujados al stack por una interrupción o excepción.
@@ -177,34 +178,30 @@ enum COLORS
 
 #define NVCONS 9
 
+#define  CONS_CLEAR 			1
+#define  CONS_CLREOL 			2
+#define  CONS_CLREOM			3
+#define  CONS_NROWS				4
+#define  CONS_NCOLS				5
+#define  CONS_NSCROLLS			6
+#define  CONS_GETXY				7
+#define  CONS_GOTOXY			8
+#define  CONS_SETATTR			9
+#define  CONS_GETATTR			10
+#define  CONS_CURSOR			11
+#define  CONS_RAW				12
+#define  CONS_PUTC				13
+#define  CONS_PUTS				14
+#define  CONS_CR				15
+#define  CONS_NL				16
+#define  CONS_TAB				17
+#define  CONS_BS				18
+#define  CONS_SETFOCUS			19
+#define  CONS_SETCURRENT		20
+#define  CONS_SET0				21
+
 driver_t* mt_cons_init(void);
-
-void mt_cons_clear(void);
-void mt_cons_clreol(void);
-void mt_cons_clreom(void);
-
-unsigned mt_cons_nrows(void);
-unsigned mt_cons_ncols(void);
-unsigned mt_cons_nscrolls(void);
-void mt_cons_getxy(unsigned *x, unsigned *y);
-void mt_cons_gotoxy(unsigned x, unsigned y);
-
-void mt_cons_setattr(unsigned fg, unsigned bg);
-void mt_cons_getattr(unsigned *fg, unsigned *bg);
-bool mt_cons_cursor(bool on);
-
-bool mt_cons_raw(bool on);
-void mt_cons_putc(char ch);
-void mt_cons_puts(const char *str);
-
-void mt_cons_cr(void);
-void mt_cons_nl(void);
-void mt_cons_tab(void);
-void mt_cons_bs(void);
-
-void mt_cons_setfocus(unsigned consnum);
-void mt_cons_setcurrent(unsigned consnum);
-unsigned mt_cons_set0(void);
+int ioctl_driver_cons(int type,int minor, ...);
 
 /* input.c */ 
 
@@ -250,32 +247,44 @@ typedef struct __attribute__((packed))
 }
 input_event_t;
 
+
+#define  INPUT_INIT				0
+#define  INPUT_PUT				1
+#define  INPUT_GET 				2
+#define  INPUT_GET_COND 		3
+#define  INPUT_GET_TIMED 		4
+#define  KBD_PUTCH				5
+#define  KBD_PUTS				6
+#define  KBD_GETCH 				7
+#define  KBD_GETCH_COND			8
+#define  KBD_GETCH_TIMED 		9
+#define  INPUT_SETFOCUS			10
+#define  INPUT_SETCURRENT		11
+
+int ioctl_driver_keyboard(int type,int minor, ...);
 driver_t* mt_input_init(void);
-
-bool mt_input_put(input_event_t *ev);
-bool mt_input_get(input_event_t *ev);
-bool mt_input_get_cond(input_event_t *ev);
-bool mt_input_get_timed(input_event_t *ev, unsigned timeout);
-
-bool mt_kbd_putch(unsigned char c);
-bool mt_kbd_puts(unsigned char *s, unsigned len);
-bool mt_kbd_getch(unsigned char *c);
-bool mt_kbd_getch_cond(unsigned char *c);
-bool mt_kbd_getch_timed(unsigned char *c, unsigned timeout);
-
-void mt_input_setfocus(unsigned consnum);
-void mt_input_setcurrent(unsigned consnum);
 
 /* ps2.c */
 
+#define  PS2_INIT 				0
+#define  PS2_GETLAYOUT 			1 
+#define  PS2_SETLAYOUT 			2
+#define  PS2_LAYOUTS 			3
+
+int ioctl_driver_ps2(int type,int minor, ...);
 driver_t* mt_ps2_init(void);
-const char *mt_ps2_getlayout(void);
-bool mt_ps2_setlayout(const char *name);
-const char **mt_ps2_layouts(void);
 
 /* ide.c */
 
 #define SECTOR_SIZE 512		// Tamaño de un sector
+
+#define	 IDE_MODEL 				3
+#define	 IDE_CAPACITY 			4
+
+int ioctl_driver_ide(int type,int minor, ...);
+driver_t* mt_ide_init(void);
+unsigned mt_ide_read(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
+unsigned mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 
 enum ide_minors				// Números de los discos
 {
@@ -284,12 +293,6 @@ enum ide_minors				// Números de los discos
 	IDE_SEC_MASTER,
 	IDE_SEC_SLAVE
 };
-
-driver_t* mt_ide_init(void);
-unsigned mt_ide_read(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
-unsigned mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
-char *mt_ide_model(unsigned minor);
-unsigned mt_ide_capacity(unsigned minor);
 
 #endif
 

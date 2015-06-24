@@ -423,8 +423,8 @@ ide_interrupt(unsigned irq)
 // Interfaz pública
 
 // Inicialización
-driver_t *
-mt_ide_init(void)
+driver_t*
+mt_ide_init()
 {
 	int i, j;
 	ide_device *device;
@@ -459,8 +459,7 @@ mt_ide_init(void)
 		mt_set_int_handler(controller->irq, ide_interrupt);
 		mt_enable_irq(controller->irq);
 	}
-	driver_t* driver = generateDriver_ide();
-	return driver;
+	return generateDriver_ide();
 }
 
 // Leer sectores. Devuelve la cantidad leída, que puede ser menor que la solicitada.
@@ -477,41 +476,28 @@ mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer)
 	return read_write_blocks(minor, block, nblocks, buffer, WRITE);
 }
 
-// Devuelve el modelo del disco, o ERROR_NO_DEVICE si no está presente
-int
-mt_ide_model(char* res, unsigned minor)
+
+// Devuelve el modelo del disco, o NULL si no está presente
+void
+mt_ide_model(unsigned minor,char ** mod)
 {
-
-	if ( !check(minor) )
-		return ERROR_NO_DEVICE;
-	ide_device *device = get_device(minor);
-
-	if (device->present){
-		strcpy(res,device->model);
-	}else{
-		return ERROR_NO_DEVICE;
+	if ( !check(minor) ) {
+		*mod = NULL;
+		return;
 	}
-
-	return 0;
-
+	ide_device *device = get_device(minor);
+	*mod = device->present ? device->model : NULL;
 }
-// Devuelve la capacidad del disco en sectores, o ERROR_NO_DEVICE si no está presente
-int
-mt_ide_capacity(int* res, unsigned minor)
+// Devuelve la capacidad del disco en sectores, o 0 si no está presente
+void
+mt_ide_capacity(unsigned minor, unsigned *cap)
 {
-
-	if ( !check(minor) )
-		return ERROR_NO_DEVICE;
-	ide_device *device = get_device(minor);
-	return device->present ? device->capacity : 0;
-	if(device->present){
-		*res = device->capacity;
-	}else{
-		return ERROR_NO_DEVICE;
+	if ( !check(minor) ) {
+		*cap = 0;
+		return;
 	}
-
-	return 0;
-
+	ide_device *device = get_device(minor);
+	*cap = device->present ? device->capacity : 0;
 }
 
 /* driver interface */
@@ -521,20 +507,21 @@ int open_driver_ide(void){
 	return 0;
 }
 
-int read_driver_ide(char *buf, int size){
+int read_driver_ide(char *buf, unsigned size){
 	//TODO: implementar si llegamos
-	return NO_METHOD_EXIST;
+	return ERR_NO_METHOD_EXIST;
 }
 
-int write_driver_ide(char *buf, int size){
+int write_driver_ide(char *buf, unsigned size){
 	//TODO: implementar si llegamos
-	return NO_METHOD_EXIST;
+	return ERR_NO_METHOD_EXIST;
 }
 
 int close_driver_ide(void) {
 	//TODO: ver si vamos a hacer algo
 	return 0;
 }
+
 
 /*
 ioctl para IDE
@@ -550,35 +537,27 @@ CAPACITY: La funcion ioctl con este parametro retorna un unsigned con la capacid
 IMPORTANTE: Tener el cuidado de tratar el retorno de forma pertinente. Ej: Desreferenciar el retorno de la funcion al llamarla en modo CAPACITY.
 
 */
+
 int ioctl_driver_ide(int type,int minor, ...) {
-
-    va_list pa;
-
-
-    va_start(pa, minor);
-
-        switch(type){
-            case MODEL:
-		{
-			//lo q devuelve va como puntero adentro de la funcion mt. tengo que cambiar su signature. En general ioctl devuelve cero si esta tdo ok.
-			char *buf = va_arg(pa, char *);
-			mt_ide_model(buf,minor);
+	int rta = 0;
+	va_list pa;
+	va_start(pa, minor);
+	switch(type){
+		case IDE_MODEL: {
+			unsigned min = va_arg(pa,unsigned);
+			char** mod = va_arg(pa,char**);
+			mt_ide_model(min,mod);
 		}
-		
-                break;
-            case CAPACITY:
-		{
-			int *res= va_arg(pa, int *);
-			mt_ide_capacity(res,minor);	
+		case IDE_CAPACITY: {
+			unsigned min = va_arg(pa,unsigned);
+			unsigned* cap = va_arg(pa,unsigned*);
+			mt_ide_capacity(min,cap);
 		}
-
-
-                break;
-            
-            }
-    
-        
-    return 0;
+		default:
+			rta = ERR_NO_METHOD_EXIST;
+	}
+	va_end(pa);
+	return rta;
 }
 
 int read_block_driver_ide(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 

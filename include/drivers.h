@@ -15,27 +15,28 @@
 #define IDE_DRIVER 3
 
 /* códigos de error */
-#define EOF -1
+
+#define DRIVER_ERROR -1
 #define NO_METHOD_EXIST -2
 #define ERROR_NO_DEVICE -3
 #define ERROR_NO_MINOR -4
+#define ERR_INVALID_ARGUMENT	-5
 
 /* drives's struct */
 typedef struct 
 {
 	char* name;
 	int (*open_driver)(void);
-	int (*read_driver)(char *buf, int size);
-	int (*write_driver)(char *buf, int size);
+	int (*read_driver)(char *buf, unsigned size);
+	int (*write_driver)(char *buf, unsigned size);
 	int (*close_driver)(void);
 	int (*ioctl_driver)(int type,int minor, ...);
-	int (*read_block_driver)(char *buf, int size);
-	int (*write_block_driver)(char *buf, int size);
+	int (*read_block_driver)(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
+	int (*write_block_driver)(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 }
 driver_t;
 
-/*ide ioctl*/
-#define MODEL 'm'
-#define CAPACITY 'c'
+
+driver_t *getDriver(int driver);
 
 #endif

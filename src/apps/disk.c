@@ -5,16 +5,22 @@ typedef char sector[SECTOR_SIZE];
 static void
 check_disk(unsigned minor)
 {
+	driver_t *disc = getDriver(IDE_DRIVER);
+
 	printk("Disco %u:\n", minor);
 
-	char *model = mt_ide_model(minor);
+	//char *model = mt_ide_model(minor);
+	char* model;
+	ioctl_driver_ide(IDE_MODEL,2,minor,&model);
 	if ( !model )
 	{
 		printk("    No detectado\n");
 		return;
 	}
 
-	unsigned capacity = mt_ide_capacity(minor);
+	//unsigned capacity = mt_ide_capacity(minor);
+	unsigned capacity;
+	ioctl_driver_ide(IDE_CAPACITY,2,minor,&capacity);
 	if ( capacity )
 	{
 		printk("    Tipo ATA, modelo %s\n", model);
@@ -29,8 +35,8 @@ check_disk(unsigned minor)
 	Time_t start;
 	unsigned maxm, n, elapsed;
 	sector *sectors = Malloc(128 * SECTOR_SIZE);
-
-	maxm = mt_ide_read(minor, 0, 128, sectors);
+	maxm = (unsigned)(disc->read_block_driver)(minor, 0, 128, sectors);
+	// maxm = mt_ide_read(minor, 0, 128, sectors);
 
 	if ( !maxm ) 
 	{
@@ -40,8 +46,9 @@ check_disk(unsigned minor)
 
 	printk("    Soporta lectura/escritura multiple de %u sectores\n", maxm);
 	start = Time();
-	for ( n = 0 ; n < (1024 * 1024) / (maxm * SECTOR_SIZE) ; n++ )
-		mt_ide_write(minor, 0, maxm, sectors);
+	for ( n = 0 ; n < (1024 * 1024) / (maxm * SECTOR_SIZE) ; n++ ) 
+		//mt_ide_write(minor, 0, maxm, sectors);
+		maxm = (unsigned)(disc->write_block_driver)(minor, 0, maxm, sectors);
 	elapsed = Time() - start;
 	printk("    Tiempo de escritura de 1 MB: %u milisegundos\n", elapsed);
 
