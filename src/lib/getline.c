@@ -28,14 +28,17 @@ getline(char *buf, unsigned size)
 	driver_t *cons = getDriver(CONS_DRIVER);
 	char *p = buf + strlen(buf), *end = buf + size - 1;
 	int c;
-	unsigned xi, yi, si;
+	unsigned xi, yi, si, ni;
 	
-	mt_cons_getxy(&xi, &yi);
-	si = mt_cons_nscrolls();
-
+	//mt_cons_getxy(&xi, &yi);
+	ioctl_driver_cons(CONS_GETXY,2,&xi, &yi);
+	//si = mt_cons_nscrolls();
+	ioctl_driver_cons(CONS_NSCROLLS,1,&si);
 	// mt_cons_puts(buf);
+	ioctl_driver_cons(CONS_PUTS,1,buf);
 	(cons->write_driver)(buf, 0);
-	mt_cons_clreol();
+	//mt_cons_clreol();
+	ioctl_driver_cons(CONS_CLREOL,0);
 	while (p < end)
 		switch (c = getc())
 		{
@@ -43,8 +46,11 @@ getline(char *buf, unsigned size)
 			case FWD:
 			case FIRST:
 			case LAST:
-				mt_cons_gotoxy(xi, yi - (mt_cons_nscrolls() - si));
-				mt_cons_clreom();
+				//mt_cons_gotoxy(xi, yi - (mt_cons_nscrolls() - si));
+				ioctl_driver_cons(CONS_NSCROLLS,1,&ni);
+				ioctl_driver_cons(CONS_GOTOXY,2,xi,yi-(ni-si));
+				//mt_cons_clreom();
+				ioctl_driver_cons(CONS_CLREOM,0);
 				*p = 0;
 				return c;
 
@@ -53,8 +59,11 @@ getline(char *buf, unsigned size)
 					break;
 				if (*--p == '\t')
 				{
-					mt_cons_gotoxy(xi, yi - (mt_cons_nscrolls() - si));
-					mt_cons_clreom();
+					//mt_cons_gotoxy(xi, yi - (mt_cons_nscrolls() - si));
+					ioctl_driver_cons(CONS_NSCROLLS,1,&ni);
+					ioctl_driver_cons(CONS_GOTOXY,2,xi,yi-(ni-si));
+					//mt_cons_clreom();
+					ioctl_driver_cons(CONS_CLREOM,0);
 					*p = 0;
 					// mt_cons_puts(buf);
 					(cons->write_driver)(buf, 0);
@@ -78,7 +87,8 @@ getline(char *buf, unsigned size)
 
 			default:
 				*p++ = c;
-				mt_cons_putc(c);
+				//mt_cons_putc(c);
+				ioctl_driver_cons(CONS_PUTC,1,&c);
 				// (cons->write_driver)((char*)&c, 1);
 				break;
 		}

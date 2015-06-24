@@ -151,38 +151,31 @@ put(unsigned char ch)
 }
 
 /* Interfaz pública */
-
-driver_t *
-mt_cons_init(void)
-{
-	unsigned i;
-
-	// Inicializar línea de origen del cursor
-	outb(CRT_ADDR, CRT_CURSOR_START);
-	outb(CRT_DATA, 14);
-
-	// Mostrar cursor
-	mt_cons_cursor(true);
-
-	// Inicializar las consolas virtuales
-	for (i = 0; i < NVCONS; i++)
-		init_vcons(i);
-
-	return generateDriver_cons();
-}
-
-void
-mt_cons_clear(void)
-{
-	bool ints = SetInts(false);
-	unsigned short *p1 = &vidmem[0][0];
-	unsigned short *p2 = &vidmem[NUMROWS][0];
-	while (p1 < p2)
-		*p1++ = DEFATTR;
-	mt_cons_gotoxy(0, 0);
-	SetInts(ints);
-}
-
+/*
+int mt_cons_init(driver_t ** driver);
+void mt_cons_clear(void);
+void mt_cons_clreol(void);
+void mt_cons_clreom(void);
+int mt_cons_nrows(unsigned * numrows);
+int mt_cons_ncols(unsigned * numcols);
+int mt_cons_nscrolls(unsigned * numscrolls);
+int mt_cons_getxy(unsigned *x, unsigned *y);
+void mt_cons_gotoxy(unsigned x, unsigned y);
+void mt_cons_setattr(unsigned fg, unsigned bg);
+int mt_cons_getattr(unsigned *fg, unsigned *bg);
+void mt_cons_cursor(bool on, bool * prevcursor);
+void mt_cons_putc(char ch);
+void mt_cons_puts(const char *str);
+void mt_cons_cr(void);
+void mt_cons_nl(void);
+void mt_cons_tab(void);
+void mt_cons_bs(void);
+void mt_cons_raw(bool on, bool * prevraw);
+void mt_cons_setfocus(unsigned consnum);
+void mt_cons_setcurrent(unsigned consnum);
+void mt_cons_set0(unsigned * prevv);
+*/
+/**********/
 void
 mt_cons_clreol(void)
 {
@@ -205,31 +198,43 @@ mt_cons_clreom(void)
 	SetInts(ints);
 }
 
-unsigned
-mt_cons_nrows(void)
+int
+mt_cons_nrows(unsigned * numrows)
 {
-	return NUMROWS;
+	if (numrows == NULL)
+		return ERR_INVALID_ARGUMENT;
+	* numrows = NUMROWS;
+	return 0;
 }
 
-unsigned
-mt_cons_ncols(void)
+int
+mt_cons_ncols(unsigned * numcols)
 {
-	return NUMCOLS;
+	if (numcols == NULL)
+		return ERR_INVALID_ARGUMENT;
+	* numcols = NUMCOLS;
+	return 0 ;
 }
 
-unsigned
-mt_cons_nscrolls(void)
+int
+mt_cons_nscrolls(unsigned * numscrolls)
 {
-	return scrolls;
+	if (numscrolls == NULL)
+		return ERR_INVALID_ARGUMENT;
+	* numscrolls = scrolls;
+	return 0;
 }
 
-void
+int
 mt_cons_getxy(unsigned *x, unsigned *y)
 {
+	if (x == NULL || y == NULL)
+		return ERR_INVALID_ARGUMENT;
 	bool ints = SetInts(false);
 	*x = cur_x;
 	*y = cur_y;
 	SetInts(ints);
+	return 0;
 }
 
 void
@@ -251,69 +256,40 @@ mt_cons_setattr(unsigned fg, unsigned bg)
 	cur_attr = ((fg & 0xF) << 8) | ((bg & 0xF) << 12);
 }
 
-void
+int
 mt_cons_getattr(unsigned *fg, unsigned *bg)
 {
+	if (fg == NULL || bg == NULL)
+		return ERR_INVALID_ARGUMENT;
 	bool ints = SetInts(false);
 	*fg = (cur_attr >> 8) & 0xF;
 	*bg = (cur_attr >> 12) & 0xF;
 	SetInts(ints);
+	return 0;
 }
 
-bool
-mt_cons_cursor(bool on)
-{
+void
+mt_cons_cursor(bool on, bool * prevcursor)
+{	
 	bool ints = SetInts(false);
 	bool prev = cursor_on;
 	cursor_on = on;
 	show_cursor();
 	set_cursor();
 	SetInts(ints);
-	return prev;
+	if (prevcursor != NULL)
+		* prevcursor = prev;
 }
 
 void
-mt_cons_putc(char ch)
+mt_cons_raw(bool on, bool * prevraw)
 {
 	bool ints = SetInts(false);
-	if (raw)
-	{
-		put(ch);
-		SetInts(ints);
-		return;
-	}
-	switch (ch)
-	{
-		case '\t':
-			mt_cons_tab();
-			break;
-
-		case '\r':
-			mt_cons_cr();
-			break;
-
-		case '\n':
-			mt_cons_nl();
-			break;
-
-		case BS:
-			mt_cons_bs();
-			break;
-
-		default:
-			put(ch);
-			break;
-	}
+	bool prev = raw;
+	raw = on;
 	SetInts(ints);
-}
-
-void
-mt_cons_puts(const char *str)
-{
-	bool ints = SetInts(false);
-	while (*str)
-		mt_cons_putc(*str++);
-	SetInts(ints);
+	if (prevraw!=NULL)
+		* prevraw = prev;
 }
 
 void
@@ -362,14 +338,48 @@ mt_cons_bs(void)
 	SetInts(ints);
 }
 
-bool
-mt_cons_raw(bool on)
+void
+mt_cons_putc(char ch)
 {
 	bool ints = SetInts(false);
-	bool prev = raw;
-	raw = on;
+	if (raw)
+	{
+		put(ch);
+		SetInts(ints);
+		return;
+	}
+	switch (ch)
+	{
+		case '\t':
+			mt_cons_tab();
+			break;
+
+		case '\r':
+			mt_cons_cr();
+			break;
+
+		case '\n':
+			mt_cons_nl();
+			break;
+
+		case BS:
+			mt_cons_bs();
+			break;
+
+		default:
+			put(ch);
+			break;
+	}
 	SetInts(ints);
-	return prev;
+}
+
+void
+mt_cons_puts(const char *str)
+{
+	bool ints = SetInts(false);
+	while (*str)
+		mt_cons_putc(*str++);
+	SetInts(ints);
 }
 
 // Se llama en modo atómico y no desde interrupciones, salvo Panic()
@@ -391,13 +401,45 @@ mt_cons_setcurrent(unsigned consnum)
 }
 
 // Se llama con interrupciones deshabilitadas
-unsigned
-mt_cons_set0(void)
+void
+mt_cons_set0(unsigned * prevv)
 {
 	unsigned prev = current;
 	current = 0;
 	set_cons();
-	return prev;
+	if (prevv != NULL)
+		* prevv = prev;
+}
+
+int
+mt_cons_init(driver_t ** driver)
+{
+	unsigned i;
+
+	// Inicializar línea de origen del cursor
+	outb(CRT_ADDR, CRT_CURSOR_START);
+	outb(CRT_DATA, 14);
+
+	// Mostrar cursor
+	mt_cons_cursor(true,NULL);
+
+	// Inicializar las consolas virtuales
+	for (i = 0; i < NVCONS; i++)
+		init_vcons(i);
+	* driver = generateDriver_cons();
+	return 0;
+}
+
+void
+mt_cons_clear(void)
+{
+	bool ints = SetInts(false);
+	unsigned short *p1 = &vidmem[0][0];
+	unsigned short *p2 = &vidmem[NUMROWS][0];
+	while (p1 < p2)
+		*p1++ = DEFATTR;
+	mt_cons_gotoxy(0, 0);
+	SetInts(ints);
 }
 
 /* driver interface */
@@ -409,7 +451,7 @@ int open_driver_cons(void){
 
 int read_driver_cons(char *buf, unsigned size){
 	//TODO: como lo implementamos??
-	return NO_METHOD_EXIST;
+	return ERR_NO_METHOD_EXIST;
 }
 
 /* size only must be 0 if you want to put all the string. If size = 1 putc is used */
@@ -428,17 +470,134 @@ int close_driver_cons(void) {
 	return 0;
 }
 
-int ioctl_driver_cons(void) {
-	//TODO: copiar prototipo y funcionamiento de printf
-	return 0;
+int ioctl_driver_cons(int type,int minor, ...) {
+	int rta = 0;
+	va_list pa;
+	va_start(pa, minor);
+	switch(type){
+		case CONS_INIT: {
+			driver_t** driver = va_arg(pa, driver_t**);
+			rta = mt_cons_init(driver);
+			break;
+		}
+		case CONS_CLEAR: {
+			mt_cons_clear();
+			break;
+		}
+		case CONS_CLREOL: {
+			mt_cons_clreol();
+			break;
+		}
+		case CONS_CLREOM: {
+			mt_cons_clreom();
+			break;
+		}
+		case CONS_NROWS: {
+			unsigned* numrows = va_arg(pa, unsigned*);
+			rta = mt_cons_nrows(numrows);
+			break;
+		}
+		case CONS_NCOLS: {
+			unsigned* numcols = va_arg(pa, unsigned*);
+			rta = mt_cons_ncols(numcols);
+			break;
+		}
+		case CONS_NSCROLLS: {
+			unsigned* numscrolls = va_arg(pa, unsigned*);
+			rta = mt_cons_nscrolls(numscrolls);
+			break;
+		}
+		case CONS_GETXY: {
+			unsigned* x = va_arg(pa, unsigned*);
+			unsigned* y = va_arg(pa, unsigned*);
+			rta = mt_cons_getxy(x, y);
+			break;
+		}
+		case CONS_GOTOXY: {
+			unsigned x = va_arg(pa, unsigned);
+			unsigned y = va_arg(pa, unsigned);
+			mt_cons_gotoxy(x, y);
+			break;
+		}
+		case CONS_SETATTR: {
+			unsigned fg = va_arg(pa, unsigned);
+			unsigned bg = va_arg(pa, unsigned);
+			mt_cons_setattr(fg, bg);
+			break;
+		}
+		case CONS_GETATTR: {
+			unsigned* fg = va_arg(pa, unsigned*);
+			unsigned* bg = va_arg(pa, unsigned*);
+			rta = mt_cons_getattr(fg, bg);
+			break;
+		}
+		case CONS_CURSOR: {
+			bool on = va_arg(pa, bool);
+			bool* curet = va_arg(pa, bool*);
+			mt_cons_cursor(on,curet);
+			break;
+		}
+		case CONS_PUTC: {
+			char* ch = va_arg(pa, char*);
+			mt_cons_putc(*ch);
+			break;
+		}
+		case CONS_PUTS: {
+			char* ch = va_arg(pa, char*);
+			mt_cons_puts(ch);
+			break;
+		}
+		case CONS_CR: {
+			mt_cons_cr();
+			break;
+		}
+		case CONS_NL: {
+			mt_cons_nl();
+			break;
+		}
+		case CONS_TAB: {
+			mt_cons_tab();
+			break;
+		}
+		case CONS_BS: {
+			mt_cons_bs();
+			break;
+		}
+		case CONS_RAW: {
+			bool on = va_arg(pa, bool);
+			bool* rawret = va_arg(pa, bool*);
+			mt_cons_raw(on, rawret);
+			break;
+		}
+		case CONS_SETFOCUS: {
+			unsigned consnum = va_arg(pa, unsigned);
+			mt_cons_setfocus(consnum);
+			break;
+		}
+		case CONS_SETCURRENT: {
+			unsigned consnum = va_arg(pa, unsigned);
+			mt_cons_setcurrent(consnum);
+			break;
+		}
+		case CONS_SET0: {
+			unsigned* consnum = va_arg(pa, unsigned*);
+			mt_cons_set0(consnum);
+			break;
+		}
+		default:
+			rta = ERR_NO_METHOD_EXIST;
+	}
+	va_end(pa);
+	return rta;
+
 }
 
 int read_block_driver_cons(unsigned minor, unsigned block, unsigned nblocks, void *buffer) { 
-	return NO_METHOD_EXIST;
+	return ERR_NO_METHOD_EXIST;
 }
 	
 int write_block_driver_cons(unsigned minor, unsigned block, unsigned nblocks, void *buffer) {
-	return NO_METHOD_EXIST;
+	return ERR_NO_METHOD_EXIST;
 }
 
 driver_t *generateDriver_cons() {

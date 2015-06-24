@@ -49,9 +49,11 @@ print(unsigned x, unsigned y, unsigned fg, unsigned bg, const char *fmt, ...)
 	va_end(ap);
 
 	Atomic();
-	mt_cons_gotoxy(x, y);
+	//mt_cons_gotoxy(x, y);
+	ioctl_driver_cons(CONS_GOTOXY,2,x,y);
 	cprintk(fg, bg, "%s", buf);
-	mt_cons_clreol();
+	//mt_cons_clreol();
+	ioctl_driver_cons(CONS_CLREOL,0);
 	Unatomic();
 }
 
@@ -211,9 +213,11 @@ peluqueria_main(int argc, char **argv)
 	int i, c;
 	bool cursor;
 	
-	mt_cons_clear();
-	cursor = mt_cons_cursor(false);
-	
+	//mt_cons_clear();
+	ioctl_driver_cons(CONS_CLEAR,0);
+	//cursor = mt_cons_cursor(false);
+	ioctl_driver_cons(CONS_CURSOR,2,false,&cursor);
+
 	TLS = Malloc(sizeof(data));
 
 	print(x_left, y_title, COLOR_PROMPT, BLACK, "Sillas");
@@ -257,8 +261,10 @@ peluqueria_main(int argc, char **argv)
 
 	Free(TLS);
 	
-	mt_cons_clear();
-	mt_cons_cursor(cursor);
+	//mt_cons_clear();
+	ioctl_driver_cons(CONS_CLEAR,0);
+	//mt_cons_cursor(cursor);
+	ioctl_driver_cons(CONS_CURSOR,cursor,NULL);
 
 	return 0;
 }

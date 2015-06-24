@@ -28,7 +28,7 @@ HEADERS = $(shell find include -type f)
 # Flags de compilación
 
 INCLUDEFLAGS = $(foreach d, $(INCLUDEDIRS), -I $(d))
-CFLAGS = -Wall -fno-stack-protector -fno-builtin -m32 $(INCLUDEFLAGS)
+CFLAGS = -Wall -g -fno-stack-protector -fno-builtin -m32 $(INCLUDEFLAGS)
 
 # Generar ejecutable (mtask) e imagen de CD (mtask.iso)
 
