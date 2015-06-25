@@ -41,7 +41,7 @@ cmdtab[] =
 	{	"ts", 			ts_main,			"[consola...]"		},
 	{	"kill",			kill_main,			"tarea [status]"	},
 	{	"test",			test_main,			""					},
-	{	"interface_tester",	interface_tester_main,			""					},
+	{	"interface_tester",	interface_tester,			""					},
 	{															}
 };
 
