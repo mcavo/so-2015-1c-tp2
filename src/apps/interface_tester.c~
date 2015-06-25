@@ -2,18 +2,29 @@
 #define IDE 1
 #define CONS 2
 #define EXIT 3
+#define TURQUESA 1
+#define VIOLETA 2
+#define AMARILLO 3
+#define AZUL 4
+#define ROJO 5
+
 //#define CLEAN_BUFFER for(int i=0;i<10;i++){getch();}
 
 static int showMenu();
 static void cons_tester();
 static void ide_tester();
 static void test_ide(unsigned minor);
+static void show_test_cons(int color);
 
 
 int
 interface_tester_main(int argc, char *argv[])
 {
+	driver_t *cons = getDriver(CONS_DRIVER);
+	cons->ioctl_driver(CONS_CLEAR,0);
+
 	int option=showMenu();
+
 
 	while((option = showMenu())!=EXIT){
 
@@ -21,20 +32,27 @@ interface_tester_main(int argc, char *argv[])
 		switch(option){
 
 			case IDE:
+				cons->ioctl_driver(CONS_CLEAR,0);
+				cprintk(MAGENTA, BLACK,"\n ** TEST DISCO RIGIDO **\n\n\n");
 				ide_tester();
 
 			break;
 
 			case CONS:
+				cons->ioctl_driver(CONS_CLEAR,0);
+				cprintk(MAGENTA, BLACK,"\n ** TEST CONSOLA **\n\n\n");
 				cons_tester();
 			break;
 			
 			default:
+				cons->ioctl_driver(CONS_CLEAR,0);
 				cprintk(RED, BLACK,"Opcion incorrecta.\n\n");
 			break;
 
 		}
 	}
+
+	cons->ioctl_driver(CONS_CLEAR,0);
 
 	return 0;
 }
@@ -43,25 +61,21 @@ interface_tester_main(int argc, char *argv[])
 static void ide_tester(){
 
 	unsigned i;
-	
 	driver_t *cons = getDriver(CONS_DRIVER);
-
-	cons->ioctl_driver(CONS_CLEAR,0);
 	
-		cprintk(LIGHTMAGENTA, BLACK,"\n \
-	** TEST DISCO RIGIDO **\n\
-	\n\n");
-
+	cprintk(YELLOW, BLACK, "Presione q para salir\n\n");		
 	for ( i = IDE_PRI_MASTER  ; i <= IDE_SEC_SLAVE ; i++ )
 		test_ide(i);
+
+	while(getch() !='q');
+	cons->ioctl_driver(CONS_CLEAR,0);	
 
 }
 
 static void test_ide(unsigned minor){
 
 	driver_t *disc = getDriver(IDE_DRIVER);
-	
-
+		
 	printk("Disco %u:\n", minor);
 
 	char* model;
@@ -86,20 +100,72 @@ static void test_ide(unsigned minor){
 		return;
 	}
 
+
+
 }
 
 static void cons_tester(){
-//Puedo hacer gotoxy cursor y en el medio de la pantalla escribir cosas tipo "Esto es una prueba de driver de consola" con mt_cons_puts
 
 	driver_t *cons = getDriver(CONS_DRIVER);
+	int color,opcion;	
+	show_test_cons(WHITE);
 
-	cons->ioctl_driver(CONS_CLEAR,0);
+	while((opcion = getch()) !='q'){
+			
+		
+		switch(opcion-48){
+			case TURQUESA:
+				color=CYAN;
+			break;
+			case VIOLETA:
+				color=MAGENTA;				
+			break;
+			case AMARILLO:
+				color=YELLOW;
+			break;
+			case AZUL:
+				color=BLUE;
+			break;
+			case ROJO:
+				color=RED;
+			break;
+
+		}
+		
+		show_test_cons(color);
+				
+
+	}
+	
+	cons->ioctl_driver(CONS_CLEAR,0);	
+
 
 }
 
+static void show_test_cons(int color){
+	
+	driver_t *cons = getDriver(CONS_DRIVER);
+	cons->ioctl_driver(CONS_CLEAR,0);
+
+	cprintk(LIGHTMAGENTA, BLACK,"\n ** TEST CONSOLA **\n\n\n");
+	cprintk(YELLOW, BLACK, "Presione q para salir\n\n");		
+	
+	cprintk(MAGENTA, BLACK,"\n \
+	** Seleccione un color **\n\
+	\n\n");
+	printk("	1.Turquesa\n\
+	2.Violeta\n\
+	3.Amarillo\n\
+	4.Azul\n\
+	5.Rojo\n\n");
+
+	cons->ioctl_driver(CONS_GOTOXY,2,20,20);
+	cprintk(color, BLACK, "ESTO ES UN TEST DE CONSOLA");
+}
+
 static int showMenu(){
-	int choice = -1,i;
-		for(i=0;i<10;i++){getch();}
+	int choice = -1;
+
 	cprintk(MAGENTA, BLACK,"\n \
 	** TESTER DE INTERFAZ DE DRIVERS **\n\
 	\n\n");
@@ -108,9 +174,8 @@ static int showMenu(){
 	3.Salir\n\n\
 	Seleccione que driver desea testear:\n\
 	");
-//	scanf("%d", &choice);
-//	CLEAN_BUFFER;
+
 	choice =getch()-48;
-	for(i=0;i<10;i++){getch();}
+
 	return choice;
 }
