@@ -3,6 +3,7 @@
 int
 setkb_main(int argc, char **argv)
 {
+	driver_t *ps2 = getDriver(PS2_DRIVER);
 	if ( argc > 2 )
 	{
 		cprintk(LIGHTRED, BLACK, "Cantidad de argumentos incorrecta\n");
@@ -12,8 +13,8 @@ setkb_main(int argc, char **argv)
 	{
 		const char * kname;
 		const char ** knames;
-		ioctl_driver_ps2(PS2_GETLAYOUT,1,&kname);
-		ioctl_driver_ps2(PS2_LAYOUTS,1,&knames);
+		(ps2->ioctl_driver)(PS2_GETLAYOUT,1,&kname);
+		(ps2->ioctl_driver)(PS2_LAYOUTS,1,&knames);
 		printk("Teclado actual: %s\n", kname);
 		printk( "Disponibles:\n");
 		const char **p = knames;
@@ -22,7 +23,7 @@ setkb_main(int argc, char **argv)
 		return 0;
 	}
 	bool valid=false;
-	ioctl_driver_ps2(PS2_SETLAYOUT,2,argv[1],&valid);
+	(ps2->ioctl_driver)(PS2_SETLAYOUT,2,argv[1],&valid);
 	if ( valid )
 	{
 		printk("Teclado actual: %s\n", argv[1]);
