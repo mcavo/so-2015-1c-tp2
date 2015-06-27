@@ -13,13 +13,15 @@ events_main(int argc, char *argv[])
 	//	;
 	bool gc = true;
 	while ( gc ) {
-		ioctl_driver_keyboard(INPUT_GET_COND,2,&event,&gc);
+		//ioctl_driver_keyboard(INPUT_GET_COND,2,&event,&gc);
+		(getDriver(INPUT_DRIVER)->ioctl_driver)(INPUT_GET_COND,2,&event,&gc);
 	}
 
 	while ( true )
 	{
 		//mt_input_get(&event);
-		ioctl_driver_keyboard(INPUT_GET,2,&event,NULL);
+		//ioctl_driver_keyboard(INPUT_GET,2,&event,NULL);
+		(getDriver(INPUT_DRIVER)->ioctl_driver)(INPUT_GET,2,&event,NULL);
 		switch ( event.type )
 		{
 			case KBD_EVENT:

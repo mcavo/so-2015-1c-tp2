@@ -205,7 +205,7 @@ void mt_cons_clear(void);
 void mt_cons_set0(unsigned * prevv);
 void mt_cons_setcurrent(unsigned consnum);
 void mt_cons_putc(char ch);
-int ioctl_driver_cons(int type,int minor, ...);
+//int ioctl_driver_cons(int type,int minor, ...);
 
 /* input.c */ 
 
@@ -265,7 +265,7 @@ input_event_t;
 #define  INPUT_SETFOCUS			10
 #define  INPUT_SETCURRENT		11
 
-int ioctl_driver_keyboard(int type,int minor, ...);
+//int ioctl_driver_keyboard(int type,int minor, ...);
 driver_t* mt_input_init(void);
 
 /* ps2.c */
