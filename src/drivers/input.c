@@ -127,7 +127,8 @@ mt_input_setfocus(unsigned consnum)			// No se llama desde interrupciones
 		input_focus = events[focus];
 		key_focus = keys[focus];
 		//mt_cons_setfocus(focus);
-		ioctl_driver_cons(CONS_SETFOCUS,1,focus);
+		//ioctl_driver_cons(CONS_SETFOCUS,1,focus);
+		(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETFOCUS,1,focus);
 	}
 	Unatomic();
 }
@@ -141,7 +142,8 @@ mt_input_setcurrent(unsigned consnum)		// Se llama con interrupciones deshabilit
 	input_current = events[current];
 	key_current = keys[current];
 	//mt_cons_setcurrent(current);
-	ioctl_driver_cons(CONS_SETCURRENT,1,current);
+	//ioctl_driver_cons(CONS_SETCURRENT,1,current);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETCURRENT,1,current);
 } 
 
 

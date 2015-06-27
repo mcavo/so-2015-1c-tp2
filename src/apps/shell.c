@@ -101,18 +101,22 @@ shell_main(int argc, char **argv)
 	hfirst = hcur = hlast = -1;
 
 	//mt_cons_getattr(&fg, &bg);
-	ioctl_driver_cons(CONS_GETATTR,2,&fg,&bg);
+	//ioctl_driver_cons(CONS_GETATTR,2,&fg,&bg);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GETATTR,2,&fg,&bg);
 	GetInfo(CurrentTask(), &info);
 	while ( true )
 	{
 		// Leer línea de comando eventualmente usando la historia
 		//mt_cons_setattr(LIGHTGRAY, BLACK);
-		ioctl_driver_cons(CONS_SETATTR,2,LIGHTGRAY,BLACK);
+		//ioctl_driver_cons(CONS_SETATTR,2,LIGHTGRAY,BLACK);
+		(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETATTR,2,LIGHTGRAY,BLACK);
 		//mt_cons_cursor(true);
-		ioctl_driver_cons(CONS_CURSOR,2,true,NULL);
+		//ioctl_driver_cons(CONS_CURSOR,2,true,NULL);
+		(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,2,true,NULL);
 		cprintk(LIGHTCYAN, BLACK, "\rMT%u> ", info.consnum);
 		//mt_cons_clreom();
-		ioctl_driver_cons(CONS_CLREOM,0);
+		//ioctl_driver_cons(CONS_CLREOM,0);
+		(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOM,0);
 		hcur = -1;
 		*line = 0;
 		do
@@ -213,7 +217,8 @@ shell_main(int argc, char **argv)
 		if ( strcmp(ex.args[0], "exit") == 0 )
 		{
 			//mt_cons_setattr(fg, bg);
-			ioctl_driver_cons(CONS_SETATTR,2,fg,bg);
+			//ioctl_driver_cons(CONS_SETATTR,2,fg,bg);
+			(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETATTR,2,fg,bg);
 			for ( hcur = 0 ; hcur < NHIST ; hcur++ )
 				Free(hist[hcur]);
 			return ex.nargs > 1 ? atoi(ex.args[1]) : 0;
@@ -246,7 +251,8 @@ shell_main(int argc, char **argv)
 					{
 						cprintk(LIGHTRED, BLACK, "\rStatus: %d\n", status);
 						//mt_cons_clreol();
-						ioctl_driver_cons(CONS_CLREOL,0);
+						//ioctl_driver_cons(CONS_CLREOL,0);
+						(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOL,0);
 					}
 				}
 				else							// correr app en background
@@ -254,7 +260,8 @@ shell_main(int argc, char **argv)
 					Task_t *t = CreateTask(detached_app, MAIN_STKSIZE, &ex, ex.args[0], DEFAULT_PRIO);
 					cprintk(LIGHTGREEN, BLACK, "\rTask: %x\n", t);
 					//mt_cons_clreol();
-					ioctl_driver_cons(CONS_CLREOL,0);
+					//ioctl_driver_cons(CONS_CLREOL,0);
+					(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOL,0);
 					Ready(t);
 					Send(t, NULL, 0);			// esperar que copie los parámetros
 				}

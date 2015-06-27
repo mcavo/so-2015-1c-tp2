@@ -71,14 +71,17 @@ cprintk(unsigned fg, unsigned bg, const char *fmt, ...)
 
 	Atomic();
 	//mt_cons_getattr(&fgi, &bgi);
-	ioctl_driver_cons(CONS_GETATTR,2,&fgi,&bgi);
+	//ioctl_driver_cons(CONS_GETATTR,2,&fgi,&bgi);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GETATTR,2,&fgi,&bgi);
 	//mt_cons_setattr(fg, bg);
-	ioctl_driver_cons(CONS_SETATTR,2,fg,bg);
+	//ioctl_driver_cons(CONS_SETATTR,2,fg,bg);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETATTR,2,fg,bg);
 	va_start(args, fmt);
 	vprintk(fmt, args);
 	va_end(args);
 	//mt_cons_setattr(fgi, bgi);
-	ioctl_driver_cons(CONS_SETATTR,2,fgi,bgi);
+	//ioctl_driver_cons(CONS_SETATTR,2,fgi,bgi);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETATTR,2,fgi,bgi);
 	Unatomic();
 }
 
