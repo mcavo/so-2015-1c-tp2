@@ -11,7 +11,7 @@ check_disk(unsigned minor)
 
 	//char *model = mt_ide_model(minor);
 	char* model;
-	ioctl_driver_ide(IDE_MODEL,2,minor,&model);
+	(disc->ioctl_driver)(IDE_MODEL,2,minor,&model);
 	if ( !model )
 	{
 		printk("    No detectado\n");
@@ -20,7 +20,7 @@ check_disk(unsigned minor)
 
 	//unsigned capacity = mt_ide_capacity(minor);
 	unsigned capacity;
-	ioctl_driver_ide(IDE_CAPACITY,2,minor,&capacity);
+	(disc->ioctl_driver)(IDE_CAPACITY,2,minor,&capacity);
 	if ( capacity )
 	{
 		printk("    Tipo ATA, modelo %s\n", model);
