@@ -201,7 +201,11 @@ enum COLORS
 #define  CONS_SET0				21
 
 driver_t* mt_cons_init(void);
-int ioctl_driver_cons(int type,int minor, ...);
+void mt_cons_clear(void);
+void mt_cons_set0(unsigned * prevv);
+void mt_cons_setcurrent(unsigned consnum);
+void mt_cons_putc(char ch);
+//int ioctl_driver_cons(int type,int minor, ...);
 
 /* input.c */ 
 
@@ -261,7 +265,7 @@ input_event_t;
 #define  INPUT_SETFOCUS			10
 #define  INPUT_SETCURRENT		11
 
-int ioctl_driver_keyboard(int type,int minor, ...);
+//int ioctl_driver_keyboard(int type,int minor, ...);
 driver_t* mt_input_init(void);
 
 /* ps2.c */
@@ -271,7 +275,7 @@ driver_t* mt_input_init(void);
 #define  PS2_SETLAYOUT 			2
 #define  PS2_LAYOUTS 			3
 
-int ioctl_driver_ps2(int type,int minor, ...);
+// int ioctl_driver_ps2(int type,int minor, ...);
 driver_t* mt_ps2_init(void);
 
 /* ide.c */
@@ -281,7 +285,7 @@ driver_t* mt_ps2_init(void);
 #define	 IDE_MODEL 				3
 #define	 IDE_CAPACITY 			4
 
-int ioctl_driver_ide(int type,int minor, ...);
+// int ioctl_driver_ide(int type,int minor, ...);
 driver_t* mt_ide_init(void);
 unsigned mt_ide_read(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 unsigned mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer);

@@ -50,10 +50,12 @@ print(unsigned x, unsigned y, unsigned fg, unsigned bg, const char *fmt, ...)
 
 	Atomic();
 	//mt_cons_gotoxy(x, y);
-	ioctl_driver_cons(CONS_GOTOXY,2,x,y);
+	//ioctl_driver_cons(CONS_GOTOXY,2,x,y);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GOTOXY,2,x,y);
 	cprintk(fg, bg, "%s", buf);
 	//mt_cons_clreol();
-	ioctl_driver_cons(CONS_CLREOL,0);
+	//ioctl_driver_cons(CONS_CLREOL,0);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOL,0);
 	Unatomic();
 }
 
@@ -214,9 +216,11 @@ peluqueria_main(int argc, char **argv)
 	bool cursor;
 	
 	//mt_cons_clear();
-	ioctl_driver_cons(CONS_CLEAR,0);
+	//ioctl_driver_cons(CONS_CLEAR,0);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLEAR,0);
 	//cursor = mt_cons_cursor(false);
-	ioctl_driver_cons(CONS_CURSOR,2,false,&cursor);
+	//ioctl_driver_cons(CONS_CURSOR,2,false,&cursor);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,2,false,&cursor);
 
 	TLS = Malloc(sizeof(data));
 
@@ -262,9 +266,11 @@ peluqueria_main(int argc, char **argv)
 	Free(TLS);
 	
 	//mt_cons_clear();
-	ioctl_driver_cons(CONS_CLEAR,0);
+	//ioctl_driver_cons(CONS_CLEAR,0);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLEAR,0);
 	//mt_cons_cursor(cursor);
-	ioctl_driver_cons(CONS_CURSOR,cursor,NULL);
+	//ioctl_driver_cons(CONS_CURSOR,cursor,NULL);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,cursor,NULL);
 
 	return 0;
 }

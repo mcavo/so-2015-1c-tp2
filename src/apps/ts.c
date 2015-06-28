@@ -47,7 +47,8 @@ ts_main(int argc, char *argv[])
 	bool check_cons = false;				// por defecto habilitar todas las consolas
 	//bool cursor = mt_cons_cursor(false);
 	bool cursor;
-	ioctl_driver_cons(CONS_CURSOR,2,false,&cursor);
+	//ioctl_driver_cons(CONS_CURSOR,2,false,&cursor);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,2,false,&cursor);
 
 	memset(enabled, 0, sizeof enabled);
 	for ( i = 1 ; i < argc ; i++ )			// habilitar las consolas especificadas
@@ -58,10 +59,12 @@ ts_main(int argc, char *argv[])
 	}
 
 	//mt_cons_clear();
-	ioctl_driver_cons(CONS_CLEAR,0);
+	//ioctl_driver_cons(CONS_CLEAR,0);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLEAR,0);
 	cprintk(WHITE, BLUE, "%s", title);
 	//mt_cons_gotoxy(0, 24);
-	ioctl_driver_cons(CONS_GOTOXY,2,0,24);
+	//ioctl_driver_cons(CONS_GOTOXY,2,0,24);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GOTOXY,2,0,24);
 	cprintk(WHITE, BLUE, "%s", foot);
 	skip = 0;
 	do
@@ -72,7 +75,8 @@ ts_main(int argc, char *argv[])
 			if ( (check_cons && !enabled[ti->consnum]) || n++ < skip )
 				continue;
 			//mt_cons_gotoxy(0, i++);
-			ioctl_driver_cons(CONS_GOTOXY,2,0,i++);
+			//ioctl_driver_cons(CONS_GOTOXY,2,0,i++);
+			(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GOTOXY,2,0,i++);
 			char namebuf[20];
 			sprintf(namebuf, ti->protected ? "[%.16s]" : "%.18s", name(ti->task));
 			cprintk(WHITE, BLACK, "%8x %-18s %u %10u %-9s %-18.18s", ti->task, namebuf, 
@@ -80,22 +84,27 @@ ts_main(int argc, char *argv[])
 			if ( ti->is_timeout )
 				cprintk(WHITE, BLACK, " %10u", ti->timeout);
 			else
-				ioctl_driver_cons(CONS_CLREOL,0);
+				(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOL,0);
+				//ioctl_driver_cons(CONS_CLREOL,0);
 				//mt_cons_clreol();
 		}
 		while ( i < 24 )
 		{
 			//mt_cons_gotoxy(0, i++);
-			ioctl_driver_cons(CONS_GOTOXY,2,0,i++);
+			//ioctl_driver_cons(CONS_GOTOXY,2,0,i++);
+			(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GOTOXY,2,0,i++);
 			//mt_cons_clreol();
-			ioctl_driver_cons(CONS_CLREOL,0);
+			//ioctl_driver_cons(CONS_CLREOL,0);
+			(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOL,0);
 		}
 		Free(info);
 	}
 	while ( getuser(&skip) );
 	//mt_cons_clear();
-	ioctl_driver_cons(CONS_CLEAR,0);
+	//ioctl_driver_cons(CONS_CLEAR,0);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLEAR,0);
 	//mt_cons_cursor(cursor);	
-	ioctl_driver_cons(CONS_CURSOR,2,cursor,NULL);
+	//ioctl_driver_cons(CONS_CURSOR,2,cursor,NULL);
+	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,2,cursor,NULL);
 	return 0;
 }
