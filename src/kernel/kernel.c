@@ -84,8 +84,8 @@ mt_main(unsigned magic, boot_info_t *info)
 	Task_t *t;
 
 	// Esto funciona aunque el módulo de consola no esté inicializado
-	//mt_cons_clear();
-	ioctl_driver_cons(CONS_CLEAR,0);
+	mt_cons_clear();
+	//ioctl_driver_cons(CONS_CLEAR,0);
 	print0("*** MTask version %s ***\n", MTASK_VERSION);
 
 	// Inicializar GDT, IDT y registros de segmento

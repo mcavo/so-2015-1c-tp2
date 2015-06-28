@@ -201,6 +201,10 @@ enum COLORS
 #define  CONS_SET0				21
 
 driver_t* mt_cons_init(void);
+void mt_cons_clear(void);
+void mt_cons_set0(unsigned * prevv);
+void mt_cons_setcurrent(unsigned consnum);
+void mt_cons_putc(char ch);
 int ioctl_driver_cons(int type,int minor, ...);
 
 /* input.c */ 
