@@ -38,7 +38,7 @@ getline(char *buf, unsigned size)
 	(cons->ioctl_driver)(CONS_NSCROLLS,1,&si);
 	// mt_cons_puts(buf);
 	//ioctl_driver_cons(CONS_PUTS,1,buf);
-	(cons->ioctl_driver)(CONS_PUTS,1,buf);
+	//(cons->ioctl_driver)(CONS_PUTS,1,buf);
 	(cons->write_driver)(buf, 0);
 	//mt_cons_clreol();
 	//ioctl_driver_cons(CONS_CLREOL,0);
