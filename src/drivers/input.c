@@ -146,7 +146,6 @@ mt_input_setcurrent(unsigned consnum)		// Se llama con interrupciones deshabilit
 /* driver interface */
 
 int open_driver_keyboard(void){
-	//TODO: ver si vamos hacer algo
 	return 0;
 }
 
@@ -172,7 +171,6 @@ int write_driver_keyboard(char *buf, unsigned size){
 }
 
 int close_driver_keyboard(void) {
-	//TODO: ver si vamos a hacer algo
 	return 0;
 }
 
