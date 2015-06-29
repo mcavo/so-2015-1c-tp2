@@ -9,7 +9,6 @@ check_disk(unsigned minor)
 
 	printk("Disco %u:\n", minor);
 
-	//char *model = mt_ide_model(minor);
 	char* model;
 	(disc->ioctl_driver)(IDE_MODEL,2,minor,&model);
 	if ( !model )
@@ -18,7 +17,6 @@ check_disk(unsigned minor)
 		return;
 	}
 
-	//unsigned capacity = mt_ide_capacity(minor);
 	unsigned capacity;
 	(disc->ioctl_driver)(IDE_CAPACITY,2,minor,&capacity);
 	if ( capacity )
@@ -47,7 +45,6 @@ check_disk(unsigned minor)
 	printk("    Soporta lectura/escritura multiple de %u sectores\n", maxm);
 	start = Time();
 	for ( n = 0 ; n < (1024 * 1024) / (maxm * SECTOR_SIZE) ; n++ ) 
-		//mt_ide_write(minor, 0, maxm, sectors);
 		maxm = (unsigned)(disc->write_block_driver)(minor, 0, maxm, sectors);
 	elapsed = Time() - start;
 	printk("    Tiempo de escritura de 1 MB: %u milisegundos\n", elapsed);

@@ -126,8 +126,6 @@ mt_input_setfocus(unsigned consnum)			// No se llama desde interrupciones
 		focus = consnum;
 		input_focus = events[focus];
 		key_focus = keys[focus];
-		//mt_cons_setfocus(focus);
-		//ioctl_driver_cons(CONS_SETFOCUS,1,focus);
 		(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETFOCUS,1,focus);
 	}
 	Unatomic();
@@ -141,8 +139,6 @@ mt_input_setcurrent(unsigned consnum)		// Se llama con interrupciones deshabilit
 	current = consnum;
 	input_current = events[current];
 	key_current = keys[current];
-	//mt_cons_setcurrent(current);
-	//ioctl_driver_cons(CONS_SETCURRENT,1,current);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETCURRENT,1,current);
 } 
 
@@ -158,7 +154,6 @@ int read_driver_keyboard(char *buf, unsigned size){
 	bool notError = true;
 	int i = 0;
 	while (i < size && notError) {
-		//notError = mt_kbd_getch(buf + i);
 		mt_kbd_getch(buf + i, &notError);
 		i++;
 	}
@@ -173,8 +168,6 @@ int write_driver_keyboard(char *buf, unsigned size){
 	mt_kbd_puts(buf, size,&b);
 	if (b)
 		return true;
-	//if (mt_kbd_puts(buf, size))
-	//	return true;
 	return ERR_DRIVER_ERROR;
 }
 
@@ -190,73 +183,117 @@ int ioctl_driver_keyboard(int type,int minor, ...) {
 	va_start(pa, minor);
 	switch(type){
 		case INPUT_PUT: {
-			input_event_t* ev = va_arg(pa, input_event_t*);
-			bool* b = va_arg(pa, bool*);
-			mt_input_put(ev,b);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				input_event_t* ev = va_arg(pa, input_event_t*);
+				bool* b = va_arg(pa, bool*);
+				mt_input_put(ev,b);
+			}
 			break;
 		}
 		case INPUT_GET: {
-			input_event_t* ev = va_arg(pa, input_event_t*);
-			bool* b = va_arg(pa, bool*);
-			mt_input_get(ev,b);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				input_event_t* ev = va_arg(pa, input_event_t*);
+				bool* b = va_arg(pa, bool*);
+				mt_input_get(ev,b);
+			}
 			break;
 		}
 		case INPUT_GET_COND: {
-			input_event_t* ev = va_arg(pa, input_event_t*);
-			bool* b = va_arg(pa, bool*);
-			mt_input_get_cond(ev,b);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				input_event_t* ev = va_arg(pa, input_event_t*);
+				bool* b = va_arg(pa, bool*);
+				mt_input_get_cond(ev,b);
+			}
 			break;
 		}
 		case INPUT_GET_TIMED: {
-			input_event_t* ev = va_arg(pa, input_event_t*);
-			unsigned timeout = va_arg(pa, unsigned);
-			bool* b = va_arg(pa, bool*);
-			mt_input_get_timed(ev,timeout,b);
+			if (minor!=3)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				input_event_t* ev = va_arg(pa, input_event_t*);
+				unsigned timeout = va_arg(pa, unsigned);
+				bool* b = va_arg(pa, bool*);
+				mt_input_get_timed(ev,timeout,b);
+			}
 			break;
 		}
 		case KBD_PUTS: {
-			char* s = va_arg(pa, char*);
-			unsigned len = va_arg(pa, unsigned);
-			bool* b = va_arg(pa, bool*);
-			mt_kbd_puts(s,len,b);
+			if (minor!=3)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				char* s = va_arg(pa, char*);
+				unsigned len = va_arg(pa, unsigned);
+				bool* b = va_arg(pa, bool*);
+				mt_kbd_puts(s,len,b);
+			}
 			break;
 		}
 		case KBD_PUTCH: {
-			char* c = va_arg(pa, char*);
-			bool* b = va_arg(pa, bool*);
-			if(c!=NULL)
-				mt_kbd_putch(*c,b);
-			else
+			if (minor!=2)
 				rta = ERR_INVALID_ARGUMENT;
+			else {
+				char* c = va_arg(pa, char*);
+				bool* b = va_arg(pa, bool*);
+				if(c!=NULL)
+					mt_kbd_putch(*c,b);
+				else
+					rta = ERR_INVALID_ARGUMENT;
+			}
 			break;
 		}
 		case KBD_GETCH: {
-			char* c = va_arg(pa, char*);
-			bool* b = va_arg(pa, bool*);
-			mt_kbd_getch(c,b);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				char* c = va_arg(pa, char*);
+				bool* b = va_arg(pa, bool*);
+				mt_kbd_getch(c,b);
+			}
 			break;
 		}
 		case KBD_GETCH_COND: {
-			unsigned char* c = va_arg(pa, unsigned char*);
-			bool* b = va_arg(pa, bool*);
-			mt_kbd_getch_cond(c,b);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned char* c = va_arg(pa, unsigned char*);
+				bool* b = va_arg(pa, bool*);
+				mt_kbd_getch_cond(c,b);
+			}
 			break;
 		}
 		case KBD_GETCH_TIMED: {
-			unsigned char* c = va_arg(pa, unsigned char*);
-			unsigned timeout = va_arg(pa, unsigned);
-			bool* b = va_arg(pa, bool*);
-			mt_kbd_getch_timed(c,timeout,b);
+			if (minor!=3)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned char* c = va_arg(pa, unsigned char*);
+				unsigned timeout = va_arg(pa, unsigned);
+				bool* b = va_arg(pa, bool*);
+				mt_kbd_getch_timed(c,timeout,b);
+			}
 			break;
 		}
 		case INPUT_SETFOCUS: {
-			unsigned consnum = va_arg(pa, unsigned);
-			mt_input_setfocus(consnum);
+			if (minor!=1)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned consnum = va_arg(pa, unsigned);
+				mt_input_setfocus(consnum);
+			}
 			break;
 		}
 		case INPUT_SETCURRENT: {
-			unsigned consnum = va_arg(pa, unsigned);
-			mt_input_setcurrent(consnum);
+			if (minor!=1)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned consnum = va_arg(pa, unsigned);
+				mt_input_setcurrent(consnum);
+			}
 		}
 		default:
 			rta = ERR_NO_METHOD_EXIST;

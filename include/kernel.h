@@ -178,34 +178,31 @@ enum COLORS
 
 #define NVCONS 9
 
-#define  CONS_CLEAR 			1
-#define  CONS_CLREOL 			2
-#define  CONS_CLREOM			3
-#define  CONS_NROWS				4
-#define  CONS_NCOLS				5
-#define  CONS_NSCROLLS			6
-#define  CONS_GETXY				7
-#define  CONS_GOTOXY			8
-#define  CONS_SETATTR			9
-#define  CONS_GETATTR			10
-#define  CONS_CURSOR			11
-#define  CONS_RAW				12
-#define  CONS_PUTC				13
-#define  CONS_PUTS				14
-#define  CONS_CR				15
-#define  CONS_NL				16
-#define  CONS_TAB				17
-#define  CONS_BS				18
-#define  CONS_SETFOCUS			19
-#define  CONS_SETCURRENT		20
-#define  CONS_SET0				21
+#define  CONS_CLEAR 			0
+#define  CONS_CLREOL 			1
+#define  CONS_CLREOM			2
+#define  CONS_NROWS				3
+#define  CONS_NCOLS				4
+#define  CONS_NSCROLLS			5
+#define  CONS_GETXY				6
+#define  CONS_GOTOXY			7
+#define  CONS_SETATTR			8
+#define  CONS_GETATTR			9
+#define  CONS_CURSOR			10
+#define  CONS_RAW				11
+#define  CONS_CR				12
+#define  CONS_NL				13
+#define  CONS_TAB				14
+#define  CONS_BS				15
+#define  CONS_SETFOCUS			16
+#define  CONS_SETCURRENT		17
+#define  CONS_SET0				18
 
 driver_t* mt_cons_init(void);
 void mt_cons_clear(void);
 void mt_cons_set0(unsigned * prevv);
 void mt_cons_setcurrent(unsigned consnum);
 void mt_cons_putc(char ch);
-//int ioctl_driver_cons(int type,int minor, ...);
 
 /* input.c */ 
 
@@ -251,41 +248,35 @@ typedef struct __attribute__((packed))
 }
 input_event_t;
 
+#define  INPUT_PUT				0
+#define  INPUT_GET 				1
+#define  INPUT_GET_COND 		2
+#define  INPUT_GET_TIMED 		3
+#define  KBD_PUTCH				4
+#define  KBD_PUTS				5
+#define  KBD_GETCH 				6
+#define  KBD_GETCH_COND			7
+#define  KBD_GETCH_TIMED 		8
+#define  INPUT_SETFOCUS			9
+#define  INPUT_SETCURRENT		10
 
-#define  INPUT_INIT				0
-#define  INPUT_PUT				1
-#define  INPUT_GET 				2
-#define  INPUT_GET_COND 		3
-#define  INPUT_GET_TIMED 		4
-#define  KBD_PUTCH				5
-#define  KBD_PUTS				6
-#define  KBD_GETCH 				7
-#define  KBD_GETCH_COND			8
-#define  KBD_GETCH_TIMED 		9
-#define  INPUT_SETFOCUS			10
-#define  INPUT_SETCURRENT		11
-
-//int ioctl_driver_keyboard(int type,int minor, ...);
 driver_t* mt_input_init(void);
 
 /* ps2.c */
 
-#define  PS2_INIT 				0
-#define  PS2_GETLAYOUT 			1 
-#define  PS2_SETLAYOUT 			2
-#define  PS2_LAYOUTS 			3
+#define  PS2_GETLAYOUT 			0
+#define  PS2_SETLAYOUT 			1
+#define  PS2_LAYOUTS 			2
 
-// int ioctl_driver_ps2(int type,int minor, ...);
 driver_t* mt_ps2_init(void);
 
 /* ide.c */
 
 #define SECTOR_SIZE 512		// Tamaño de un sector
 
-#define	 IDE_MODEL 				3
-#define	 IDE_CAPACITY 			4
+#define	 IDE_MODEL 				0
+#define	 IDE_CAPACITY 			1
 
-// int ioctl_driver_ide(int type,int minor, ...);
 driver_t* mt_ide_init(void);
 unsigned mt_ide_read(unsigned minor, unsigned block, unsigned nblocks, void *buffer);
 unsigned mt_ide_write(unsigned minor, unsigned block, unsigned nblocks, void *buffer);

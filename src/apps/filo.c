@@ -73,8 +73,6 @@ static void
 mprint(point where, char *msg, unsigned color)
 {
 	Atomic();
-	//mt_cons_gotoxy(where.x, where.y);
-	//ioctl_driver_cons(CONS_GOTOXY,2,where.x, where.y);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GOTOXY,2,where.x, where.y);
 	cprintk(color, BLACK, "%-10.10s", msg);
 	Unatomic();
@@ -180,11 +178,7 @@ phil_main(int argc, char *argv[])
 	TLS = Malloc(sizeof(data));
 
 	// Inicializar display
-	//mt_cons_clear();
-	//ioctl_driver_cons(CONS_CLEAR,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLEAR,0);
-	//cursor = mt_cons_cursor(false);
-	//ioctl_driver_cons(CONS_CURSOR,2,false,&cursor);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,2,false,&cursor);
 	cprintk(LIGHTGREEN, BLACK, "Oprima cualquier tecla para salir");
 	for ( i = 0 ; i < NF ; i++ )
@@ -215,11 +209,7 @@ phil_main(int argc, char *argv[])
 	DeleteMonitor(mon);
 
 	// Reponer pantalla
-	//mt_cons_clear();
-	//ioctl_driver_cons(CONS_CLEAR,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLEAR,0);
-	//mt_cons_cursor(cursor);
-	//ioctl_driver_cons(CONS_CURSOR,2,cursor,NULL);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,2,cursor,NULL);
 
 	// Liberar TLS

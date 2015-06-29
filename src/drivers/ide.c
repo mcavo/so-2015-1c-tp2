@@ -503,22 +503,18 @@ mt_ide_capacity(unsigned minor, unsigned *cap)
 /* driver interface */
 
 int open_driver_ide(void){
-	//TODO: ver si vamos hacer algo
 	return 0;
 }
 
 int read_driver_ide(char *buf, unsigned size){
-	//TODO: implementar si llegamos
 	return ERR_NO_METHOD_EXIST;
 }
 
 int write_driver_ide(char *buf, unsigned size){
-	//TODO: implementar si llegamos
 	return ERR_NO_METHOD_EXIST;
 }
 
 int close_driver_ide(void) {
-	//TODO: ver si vamos a hacer algo
 	return 0;
 }
 
@@ -544,14 +540,22 @@ int ioctl_driver_ide(int type,int minor, ...) {
 	va_start(pa, minor);
 	switch(type){
 		case IDE_MODEL: {
-			unsigned min = va_arg(pa,unsigned);
-			char** mod = va_arg(pa,char**);
-			mt_ide_model(min,mod);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned min = va_arg(pa,unsigned);
+				char** mod = va_arg(pa,char**);
+				mt_ide_model(min,mod);
+			}
 		}
 		case IDE_CAPACITY: {
-			unsigned min = va_arg(pa,unsigned);
-			unsigned* cap = va_arg(pa,unsigned*);
-			mt_ide_capacity(min,cap);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned min = va_arg(pa,unsigned);
+				unsigned* cap = va_arg(pa,unsigned*);
+				mt_ide_capacity(min,cap);
+			}
 		}
 		default:
 			rta = ERR_NO_METHOD_EXIST;

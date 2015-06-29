@@ -85,7 +85,6 @@ mt_main(unsigned magic, boot_info_t *info)
 
 	// Esto funciona aunque el módulo de consola no esté inicializado
 	mt_cons_clear();
-	//ioctl_driver_cons(CONS_CLEAR,0);
 	print0("*** MTask version %s ***\n", MTASK_VERSION);
 
 	// Inicializar GDT, IDT y registros de segmento
@@ -161,8 +160,6 @@ mt_main(unsigned magic, boot_info_t *info)
 	// Pasarse a la consola 1, tomar el foco y ejecutar un shell
 	mt_curr_task->send_queue.name = "shell";
 	SetConsole(mt_curr_task, 1);
-	//mt_input_setfocus(1);
-	//ioctl_driver_keyboard(INPUT_SETFOCUS,1,1);
 	(getDriver(INPUT_DRIVER)->ioctl_driver)(INPUT_SETFOCUS,1,1);
 	run_shell(NULL);
 }
@@ -234,8 +231,6 @@ mt_select_task(void)
 	TLS = mt_curr_task->tls;
 
 	/* Actualizar terminal actual */
-	//mt_input_setcurrent(mt_curr_task->consnum);
-	//ioctl_driver_keyboard(INPUT_SETCURRENT,1,mt_curr_task->consnum);
 	(getDriver(INPUT_DRIVER)->ioctl_driver)(INPUT_SETCURRENT,1,mt_curr_task->consnum);
 
 	/* Reponer contexto adicional */
@@ -259,8 +254,6 @@ run_shell(void *arg)
 	char *argv[] = { "shell", NULL };	
 	while ( true )
 	{
-		//mt_cons_clear();
-		//ioctl_driver_cons(CONS_CLEAR,0);
 		(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLEAR,0);
 		cprintk(LIGHTCYAN, BLACK, "Bienvenido a MTask\n");
 		shell_main(1, argv);
@@ -692,8 +685,6 @@ SetConsole(Task_t *task, unsigned consnum)
 		task->consnum = consnum;
 		if ( task == mt_curr_task )
 			(getDriver(INPUT_DRIVER)->ioctl_driver)(INPUT_SETCURRENT,1,consnum);
-			//ioctl_driver_keyboard(INPUT_SETCURRENT,1,consnum);
-			//mt_input_setcurrent(consnum);
 	}
 	SetInts(ints);
 	return true;
@@ -1044,36 +1035,18 @@ Panic(const char *format, ...)
 	va_list ap;
 
 	mt_cli();
-	//mt_cons_setfocus(mt_curr_task->consnum);
-	//ioctl_driver_cons(CONS_SETFOCUS,1,mt_curr_task->consnum);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETFOCUS,1,mt_curr_task->consnum);
-	//mt_cons_setattr(WHITE, BLUE);
-	//ioctl_driver_cons(CONS_SETATTR,2,WHITE,BLUE);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_SETATTR,2,WHITE,BLUE);
-	//mt_cons_cursor(false);
-	//ioctl_driver_cons(CONS_CURSOR,2,false,NULL);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,2,false,NULL);
-	//mt_cons_cr();
-	//ioctl_driver_cons(CONS_CR,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CR,0);
-	//mt_cons_nl();
-	//ioctl_driver_cons(CONS_NL,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_NL,0);
 	printk("PANIC: %s (cons %u)", GetName(mt_curr_task), mt_curr_task->consnum);
-	//mt_cons_clreol();
-	//ioctl_driver_cons(CONS_CLREOL,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOL,0);
-	//mt_cons_cr();
-	//ioctl_driver_cons(CONS_CR,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CR,0);
-	//mt_cons_nl();
-	//ioctl_driver_cons(CONS_NL,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_NL,0);
 	va_start(ap, format);
 	vprintk(format, ap);
 	va_end(ap);
-	//mt_cons_clreol();
-	//ioctl_driver_cons(CONS_CLREOL,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOL,0);
 	mt_hlt();
 }

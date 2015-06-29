@@ -8,7 +8,6 @@
 #define AZUL 4
 #define ROJO 5
 
-//#define CLEAN_BUFFER for(int i=0;i<10;i++){getch();}
 
 static int showMenu();
 static void cons_tester();
@@ -23,8 +22,7 @@ interface_tester_main(int argc, char *argv[])
 	driver_t *cons = getDriver(CONS_DRIVER);
 	cons->ioctl_driver(CONS_CLEAR,0);
 
-	int option=showMenu();
-
+	int option;
 
 	while((option = showMenu())!=EXIT){
 
@@ -175,7 +173,7 @@ static int showMenu(){
 	Seleccione que driver desea testear:\n\
 	");
 
-	choice =getch()-48;
+	choice =getch()-'0';
 
 	return choice;
 }

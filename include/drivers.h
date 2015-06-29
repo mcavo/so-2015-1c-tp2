@@ -12,11 +12,9 @@
 
 /* códigos de error */
 
-#define ERR_DRIVER_ERROR -1
-#define ERR_NO_METHOD_EXIST -2
-#define ERROR_NO_DEVICE -3
-#define ERROR_NO_MINOR -4
-#define ERR_INVALID_ARGUMENT	-5
+#define ERR_DRIVER_ERROR 		-1
+#define ERR_NO_METHOD_EXIST 	-2
+#define ERR_INVALID_ARGUMENT	-3
 
 /* drives's struct */
 typedef struct 

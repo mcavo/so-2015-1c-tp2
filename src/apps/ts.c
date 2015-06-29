@@ -45,9 +45,7 @@ ts_main(int argc, char *argv[])
 	TaskInfo_t *ti, *info;
 	bool enabled[NVCONS];
 	bool check_cons = false;				// por defecto habilitar todas las consolas
-	//bool cursor = mt_cons_cursor(false);
 	bool cursor;
-	//ioctl_driver_cons(CONS_CURSOR,2,false,&cursor);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,2,false,&cursor);
 
 	memset(enabled, 0, sizeof enabled);
@@ -58,12 +56,8 @@ ts_main(int argc, char *argv[])
 			enabled[cons] = check_cons = true;
 	}
 
-	//mt_cons_clear();
-	//ioctl_driver_cons(CONS_CLEAR,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLEAR,0);
 	cprintk(WHITE, BLUE, "%s", title);
-	//mt_cons_gotoxy(0, 24);
-	//ioctl_driver_cons(CONS_GOTOXY,2,0,24);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GOTOXY,2,0,24);
 	cprintk(WHITE, BLUE, "%s", foot);
 	skip = 0;
@@ -74,8 +68,6 @@ ts_main(int argc, char *argv[])
 		{
 			if ( (check_cons && !enabled[ti->consnum]) || n++ < skip )
 				continue;
-			//mt_cons_gotoxy(0, i++);
-			//ioctl_driver_cons(CONS_GOTOXY,2,0,i++);
 			(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GOTOXY,2,0,i++);
 			char namebuf[20];
 			sprintf(namebuf, ti->protected ? "[%.16s]" : "%.18s", name(ti->task));
@@ -85,26 +77,16 @@ ts_main(int argc, char *argv[])
 				cprintk(WHITE, BLACK, " %10u", ti->timeout);
 			else
 				(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOL,0);
-				//ioctl_driver_cons(CONS_CLREOL,0);
-				//mt_cons_clreol();
 		}
 		while ( i < 24 )
 		{
-			//mt_cons_gotoxy(0, i++);
-			//ioctl_driver_cons(CONS_GOTOXY,2,0,i++);
 			(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_GOTOXY,2,0,i++);
-			//mt_cons_clreol();
-			//ioctl_driver_cons(CONS_CLREOL,0);
 			(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLREOL,0);
 		}
 		Free(info);
 	}
 	while ( getuser(&skip) );
-	//mt_cons_clear();
-	//ioctl_driver_cons(CONS_CLEAR,0);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CLEAR,0);
-	//mt_cons_cursor(cursor);	
-	//ioctl_driver_cons(CONS_CURSOR,2,cursor,NULL);
 	(getDriver(CONS_DRIVER)->ioctl_driver)(CONS_CURSOR,2,cursor,NULL);
 	return 0;
 }

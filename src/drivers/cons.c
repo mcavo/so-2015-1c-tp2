@@ -420,12 +420,10 @@ mt_cons_clear(void)
 /* driver interface */
 
 int open_driver_cons(void){
-	//TODO: ver si vamos hacer algo
 	return 0;
 }
 
 int read_driver_cons(char *buf, unsigned size){
-	//TODO: como lo implementamos??
 	return ERR_NO_METHOD_EXIST;
 }
 
@@ -441,7 +439,6 @@ int write_driver_cons(char *buf, unsigned size){
 }
 
 int close_driver_cons(void) {
-	//TODO: ver si vamos a hacer algo
 	return 0;
 }
 
@@ -451,86 +448,129 @@ int ioctl_driver_cons(int type,int minor, ...) {
 	va_start(pa, minor);
 	switch(type){
 		case CONS_CLEAR: {
-			mt_cons_clear();
+			if (minor!=0)
+				rta = ERR_INVALID_ARGUMENT;
+			else
+				mt_cons_clear();
 			break;
 		}
 		case CONS_CLREOL: {
-			mt_cons_clreol();
+			if (minor!=0)
+				rta = ERR_INVALID_ARGUMENT;
+			else
+				mt_cons_clreol();
 			break;
 		}
 		case CONS_CLREOM: {
-			mt_cons_clreom();
+			if (minor!=0)
+				rta = ERR_INVALID_ARGUMENT;
+			else
+				mt_cons_clreom();
 			break;
 		}
 		case CONS_NROWS: {
-			unsigned* numrows = va_arg(pa, unsigned*);
-			rta = mt_cons_nrows(numrows);
+			if (minor!=1)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned* numrows = va_arg(pa, unsigned*);
+				rta = mt_cons_nrows(numrows);
+			}
 			break;
 		}
 		case CONS_NCOLS: {
-			unsigned* numcols = va_arg(pa, unsigned*);
-			rta = mt_cons_ncols(numcols);
+			if (minor!=1)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned* numcols = va_arg(pa, unsigned*);
+				rta = mt_cons_ncols(numcols);
+			}
 			break;
 		}
 		case CONS_NSCROLLS: {
-			unsigned* numscrolls = va_arg(pa, unsigned*);
-			rta = mt_cons_nscrolls(numscrolls);
+			if (minor!=1)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned* numscrolls = va_arg(pa, unsigned*);
+				rta = mt_cons_nscrolls(numscrolls);
+			}
 			break;
 		}
 		case CONS_GETXY: {
-			unsigned* x = va_arg(pa, unsigned*);
-			unsigned* y = va_arg(pa, unsigned*);
-			rta = mt_cons_getxy(x, y);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned* x = va_arg(pa, unsigned*);
+				unsigned* y = va_arg(pa, unsigned*);
+				rta = mt_cons_getxy(x, y);
+			}
 			break;
 		}
 		case CONS_GOTOXY: {
-			unsigned x = va_arg(pa, unsigned);
-			unsigned y = va_arg(pa, unsigned);
-			mt_cons_gotoxy(x, y);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {	
+				unsigned x = va_arg(pa, unsigned);
+				unsigned y = va_arg(pa, unsigned);
+				mt_cons_gotoxy(x, y);
+			}
 			break;
 		}
 		case CONS_SETATTR: {
-			unsigned fg = va_arg(pa, unsigned);
-			unsigned bg = va_arg(pa, unsigned);
-			mt_cons_setattr(fg, bg);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned fg = va_arg(pa, unsigned);
+				unsigned bg = va_arg(pa, unsigned);
+				mt_cons_setattr(fg, bg);
+			}
 			break;
 		}
 		case CONS_GETATTR: {
-			unsigned* fg = va_arg(pa, unsigned*);
-			unsigned* bg = va_arg(pa, unsigned*);
-			rta = mt_cons_getattr(fg, bg);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned* fg = va_arg(pa, unsigned*);
+				unsigned* bg = va_arg(pa, unsigned*);
+				rta = mt_cons_getattr(fg, bg);
+			}
 			break;
 		}
 		case CONS_CURSOR: {
-			bool on = va_arg(pa, bool);
-			bool* curet = va_arg(pa, bool*);
-			mt_cons_cursor(on,curet);
-			break;
-		}
-		case CONS_PUTC: {
-			char* ch = va_arg(pa, char*);
-			mt_cons_putc(*ch);
-			break;
-		}
-		case CONS_PUTS: {
-			char* ch = va_arg(pa, char*);
-			mt_cons_puts(ch);
+			if (minor!=2)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				bool on = va_arg(pa, bool);
+				bool* curet = va_arg(pa, bool*);
+				mt_cons_cursor(on,curet);
+			}
 			break;
 		}
 		case CONS_CR: {
-			mt_cons_cr();
+			if (minor!=0)
+				rta = ERR_INVALID_ARGUMENT;
+			else
+				mt_cons_cr();
 			break;
 		}
 		case CONS_NL: {
-			mt_cons_nl();
+			if (minor!=0)
+				rta = ERR_INVALID_ARGUMENT;
+			else
+				mt_cons_nl();
 			break;
 		}
 		case CONS_TAB: {
-			mt_cons_tab();
+			if (minor!=0)
+				rta = ERR_INVALID_ARGUMENT;
+			else
+				mt_cons_tab();
 			break;
 		}
 		case CONS_BS: {
-			mt_cons_bs();
+			if (minor!=0)
+				rta = ERR_INVALID_ARGUMENT;
+			else
+				mt_cons_bs();
 			break;
 		}
 		case CONS_RAW: {
@@ -540,18 +580,30 @@ int ioctl_driver_cons(int type,int minor, ...) {
 			break;
 		}
 		case CONS_SETFOCUS: {
-			unsigned consnum = va_arg(pa, unsigned);
-			mt_cons_setfocus(consnum);
+			if (minor!=1)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned consnum = va_arg(pa, unsigned);
+				mt_cons_setfocus(consnum);
+			}
 			break;
 		}
 		case CONS_SETCURRENT: {
-			unsigned consnum = va_arg(pa, unsigned);
-			mt_cons_setcurrent(consnum);
+			if (minor!=1)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned consnum = va_arg(pa, unsigned);
+				mt_cons_setcurrent(consnum);
+			}
 			break;
 		}
 		case CONS_SET0: {
-			unsigned* consnum = va_arg(pa, unsigned*);
-			mt_cons_set0(consnum);
+			if (minor!=1)
+				rta = ERR_INVALID_ARGUMENT;
+			else {
+				unsigned* consnum = va_arg(pa, unsigned*);
+				mt_cons_set0(consnum);
+			}
 			break;
 		}
 		default:
